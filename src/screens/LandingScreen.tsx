@@ -16,11 +16,11 @@ function LandingScreen({navigation}: props) {
                     style={OpeninScreenStyle.logo}
         ></Image>
         {/* Login Button */}
-        <TouchableOpacity style={OpeninScreenStyle.button} onPress={() => navigation.navigate('LandingScreen')}>
+        <TouchableOpacity style={OpeninScreenStyle.button} onPress={() => navigation.navigate('LoginScreen')}>
           <Text style={OpeninScreenStyle.buttonText}>Login</Text>
         </TouchableOpacity>
         {/* Create Account Button */}
-        <TouchableOpacity style={OpeninScreenStyle.button} onPress={() => navigation.navigate('LandingScreen')}>
+        <TouchableOpacity style={OpeninScreenStyle.button} onPress={() => navigation.navigate('RegisterScreen')}>
           <Text style={OpeninScreenStyle.buttonText}>Create Account</Text>
         </TouchableOpacity>
 
