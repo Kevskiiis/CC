@@ -1,7 +1,14 @@
-import { StatusBar } from 'expo-status-bar';
 import { Button, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
+import { StatusBar } from 'expo-status-bar';
 
-export default function OpeningScreen() {
+
+type props = NativeStackScreenProps<OpeningRoutesStackParams, 'LandingScreen'>; 
+
+function LandingScreen({navigation}: props) {
+
   return (
     <View style={OpeninScreenStyle.container}>
         <Image 
@@ -9,11 +16,11 @@ export default function OpeningScreen() {
                     style={OpeninScreenStyle.logo}
         ></Image>
         {/* Login Button */}
-        <TouchableOpacity style={OpeninScreenStyle.button}>
+        <TouchableOpacity style={OpeninScreenStyle.button} onPress={() => navigation.navigate('LandingScreen')}>
           <Text style={OpeninScreenStyle.buttonText}>Login</Text>
         </TouchableOpacity>
         {/* Create Account Button */}
-        <TouchableOpacity style={OpeninScreenStyle.button}>
+        <TouchableOpacity style={OpeninScreenStyle.button} onPress={() => navigation.navigate('LandingScreen')}>
           <Text style={OpeninScreenStyle.buttonText}>Create Account</Text>
         </TouchableOpacity>
 
@@ -21,6 +28,7 @@ export default function OpeningScreen() {
     </View>
   );
 }
+export default LandingScreen;
 
 const OpeninScreenStyle = StyleSheet.create({ 
   container: {
