@@ -4,10 +4,6 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// Screeens:
-import LandingScreen from './src/screens/LandingScreen';
-import LoginScreen from './src/screens/LoginScreen';
-
 // Routes:
 import OpeningRoutes from './src/routes/OpeningRoutes';
 

@@ -12,8 +12,8 @@ function LandingScreen({navigation}: props) {
   return (
     <View style={OpeninScreenStyle.container}>
         <Image 
-            source={{uri:'https://tse1.mm.bing.net/th/id/OIP.fssi_WH8r1e_i5oXsAmKYwHaEQ?cb=thfvnext&rs=1&pid=ImgDetMain&o=7&rm=3'}}
-                    style={OpeninScreenStyle.logo}
+          src={''}
+          style={OpeninScreenStyle.logo}
         ></Image>
         {/* Login Button */}
         <TouchableOpacity style={OpeninScreenStyle.button} onPress={() => navigation.navigate('LoginScreen')}>
