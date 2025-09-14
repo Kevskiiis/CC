@@ -1,5 +1,4 @@
 import { Button, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
 import { StatusBar } from 'expo-status-bar';
@@ -46,7 +45,7 @@ const OpeninScreenStyle = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 15,
-    borderWidth: 5,
+    borderWidth: 4,
     borderColor: '#000000ff',
     width: 220,
     height: 60,

@@ -11,10 +11,11 @@ function LoginScreen ({navigation}: props) {
 
     return (
         <View style={LoginStyle.container}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-                <Text>Back</Text>
-            </TouchableOpacity>
-
+            <View style={LoginStyle.backButtonContainer}>
+                <TouchableOpacity style={LoginStyle.backButton} onPress={() => navigation.goBack()}>
+                    <Text style={LoginStyle.buttonText}>Back</Text>
+                </TouchableOpacity>
+            </View>
             <View style={LoginStyle.inputsContainer}>
                 <TextInput
                     onChangeText={(newText) => setEmail(newText)}
@@ -43,22 +44,23 @@ const LoginStyle = StyleSheet.create ({
         flexDirection: 'column',
         backgroundColor: '#4CAF50',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
     },
     inputsContainer: {
+        flex: 1,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         gap: 20,
-        height: 300,
-        width: 300,
+        height: 400,
+        width: 300
     },
     textInput: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 3,
-        borderRadius: 7,
+        borderWidth: 4,
+        borderRadius: 15,
         textAlign: 'center',
         fontSize: 16,
         height: 50,
@@ -69,8 +71,8 @@ const LoginStyle = StyleSheet.create ({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 3,
-        borderRadius: 7,
+        borderWidth: 4,
+        borderRadius: 15,
         height: 50,
         width: 275,
         backgroundColor: '#000000ff'
@@ -79,5 +81,22 @@ const LoginStyle = StyleSheet.create ({
         color: '#ffffff',
         fontWeight: '700',
         fontSize: 20
+    },
+    backButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 4, 
+        borderRadius: 15,
+        width: 90,
+        height: 50,
+        backgroundColor: '#000000ff'
+    },
+    backButtonContainer: {
+        position: 'relative',
+        top: 85,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        width: 275,
+        height: 'auto'
     }
 })
