@@ -1,4 +1,5 @@
 import {View, Text, StyleSheet, TextInput, TouchableOpacity} from 'react-native'; 
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useState } from 'react';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
@@ -10,7 +11,11 @@ function LoginScreen ({navigation}: props) {
     const [password, setPassword] = useState('');
 
     return (
-        <View style={LoginStyle.container}>
+        <KeyboardAwareScrollView 
+            enableOnAndroid={true}
+            // style={LoginStyle.container}
+            
+        >
             <View style={LoginStyle.backButtonContainer}>
                 <TouchableOpacity style={LoginStyle.backButton} onPress={() => navigation.goBack()}>
                     <Text style={LoginStyle.buttonText}>Back</Text>
@@ -33,7 +38,7 @@ function LoginScreen ({navigation}: props) {
                     <Text style={LoginStyle.buttonText}>Login</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </KeyboardAwareScrollView>
     )
 }
 export default LoginScreen;
@@ -60,7 +65,7 @@ const LoginStyle = StyleSheet.create ({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 4,
-        borderRadius: 15,
+        borderRadius: 10,
         textAlign: 'center',
         fontSize: 16,
         height: 50,
@@ -72,7 +77,7 @@ const LoginStyle = StyleSheet.create ({
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 4,
-        borderRadius: 15,
+        borderRadius: 10,
         height: 50,
         width: 275,
         backgroundColor: '#000000ff'

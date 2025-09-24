@@ -44,7 +44,7 @@ const OpeninScreenStyle = StyleSheet.create({
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 15,
+    borderRadius: 10,
     borderWidth: 4,
     borderColor: '#000000ff',
     width: 220,

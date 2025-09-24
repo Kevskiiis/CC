@@ -1,7 +1,14 @@
 import { StyleSheet, View, Text, TouchableOpacity, TextInput} from "react-native";
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useState } from "react";
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
+
+//
+import { responsive } from "../utils/responsive";
+
+// Components:
+import InputBox from "../components/InputBox";
 
 type props = NativeStackScreenProps<OpeningRoutesStackParams, 'RegisterScreen'>;
 
@@ -11,60 +18,44 @@ function RegisterScreen ({navigation}: props) {
     })
 
     return (
-        <View style={RegisterStyles.container}>
-            {/* Back Button */}
-            <View style={RegisterStyles.backButtonContainer}>
-                <TouchableOpacity style={RegisterStyles.backButton} onPress={() => navigation.goBack()}>
-                    <Text style={RegisterStyles.buttonText}>Back</Text>
-                </TouchableOpacity>
+        <KeyboardAwareScrollView
+            style={RegisterStyles.scrollViewOutside}
+            contentContainerStyle={RegisterStyles.scrollViewInside}
+            enableOnAndroid={true}
+            extraScrollHeight={responsive.number(100)}
+            enableAutomaticScroll={true}
+            keyboardOpeningTime={350}
+        >
+            <View style={RegisterStyles.formContainer}>
+                {/* Back Button */}
+                <View style={RegisterStyles.backButtonContainer}>
+                    <TouchableOpacity style={RegisterStyles.backButton} onPress={() => navigation.goBack()}>
+                        <Text style={RegisterStyles.buttonText}>Back</Text>
+                    </TouchableOpacity>
+                </View>
+                {/* New User Entries */}
+                <View style={RegisterStyles.inputsContainer}>
+                    <Text style={RegisterStyles.label}>First Name</Text>
+                    <InputBox boxPlaceholder="First Name"/>
+                    <Text style={RegisterStyles.label}>Last Name</Text>
+                    <InputBox boxPlaceholder="Last Name"/>
+                    <Text style={RegisterStyles.label}>Phone Number</Text>
+                    <InputBox boxPlaceholder="Phone Number"/>
+                    <Text style={RegisterStyles.label}>Email</Text>
+                    <InputBox boxPlaceholder="Email"/>
+                    <Text style={RegisterStyles.label}>Password</Text>
+                    <InputBox boxPlaceholder="Password"/>
+                    <TouchableOpacity style={RegisterStyles.button}>
+                        <Text style={RegisterStyles.buttonText}>Create Account</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            {/* New User Entries */}
-            <View style={RegisterStyles.inputsContainer}>
-                <TextInput
-                    style={RegisterStyles.textInput}
-                    placeholder="First name"
-                />
-                <TextInput
-                    style={RegisterStyles.textInput}
-                    placeholder="Middle name"
-                />
-                <TextInput
-                    style={RegisterStyles.textInput}
-                    placeholder="Last name"
-                />
-                <TextInput
-                    style={RegisterStyles.textInput}
-                    placeholder="Phone number"
-                />
-                <TextInput
-                    style={RegisterStyles.textInput}
-                    placeholder="Email"
-                />
-                <TextInput
-                    style={RegisterStyles.textInput}
-                    placeholder="Password"
-                />
-                <TextInput
-                    style={RegisterStyles.textInput}
-                    placeholder="Re-enter password"
-                />
-                <TouchableOpacity style={RegisterStyles.button}>
-                    <Text style={RegisterStyles.buttonText}>Create Account</Text>
-                </TouchableOpacity>
-            </View>
-        </View>
+        </KeyboardAwareScrollView>
     )
 }
 export default RegisterScreen;
 
 const RegisterStyles = StyleSheet.create({
-    container: {
-        flex: 1,
-        flexDirection: 'column',
-        backgroundColor: '#4CAF50',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
     buttonText: {
         color: '#ffffff',
         fontWeight: '700',
@@ -74,52 +65,76 @@ const RegisterStyles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 4,
-        borderRadius: 15,
-        height: 50,
-        width: 275,
+        borderWidth: responsive.number(4),
+        borderRadius: responsive.number(10),
+        marginTop: responsive.number(10),
+        height: responsive.number(50),
+        width: responsive.number(275),
         backgroundColor: '#000000ff'
     },
     backButton: {
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 4, 
-        borderRadius: 15,
-        width: 90,
-        height: 50,
+        borderWidth: responsive.number(4),
+        borderRadius: responsive.number(15),
+        width: responsive.number(100),
+        height: responsive.number(50),
         backgroundColor: '#000000ff'
     },
+    label: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingLeft: responsive.number(8),
+        fontSize: responsive.fontSize(18),
+        // fontFamily: 'Georgia',
+        fontWeight: "600",
+        height: responsive.number(30),
+        width: '100%',
+        // backgroundColor: '#4CAF50'
+    },
+    scrollViewOutside: {
+    },
+    scrollViewInside: {
+        flexGrow: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start', 
+        alignItems: 'center',
+        paddingTop: responsive.number(50),
+        paddingBottom: responsive.number(30),
+        backgroundColor: '#4087d8ff'
+    },
+    formContainer: {
+        // flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+        alignItems: 'stretch',
+        gap: responsive.number(15),
+        paddingTop: responsive.number(10),
+        paddingLeft: responsive.number(5),
+        paddingRight: responsive.number(5),
+        width: responsive.number(340),
+        height: responsive.number(700),
+        borderWidth: responsive.number(6),
+        borderRadius: responsive.number(8),
+        backgroundColor: '#D0F0C0',
+    },
     backButtonContainer: {
-        flex: 0.25,
-        position: 'relative',
-        top: 85,
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        width: 275,
-        height: 'auto'
+        width:'100%',
+        height: responsive.number(60),
+        // backgroundColor: '#ffffff'
     },
     inputsContainer: {
-        flex: 0.75,
         flexDirection: 'column',
-        justifyContent: 'center',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        gap: 20,
-        width: 310,
-        marginBottom: 50,
-        backgroundColor: '#ffffff',
+        gap: responsive.number(10),
+        paddingLeft: responsive.number(10),
+        paddingRight: responsive.number(10),
+        width: '100%',
+        height: responsive.number(600),
+        // backgroundColor: '#ba3636ff'
     },
-    textInput: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderBottomWidth: 2,
-        // borderWidth: 4,
-        // borderRadius: 15,
-        textAlign: 'center',
-        fontSize: 16,
-        height: 50,
-        width: 275,
-        color: '#ffffff',
-        backgroundColor: '#29a01aff'
-    }
-})
+}) 
