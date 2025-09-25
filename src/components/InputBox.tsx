@@ -1,13 +1,19 @@
 import { StyleSheet, View, Text, TouchableOpacity, TextInput} from "react-native";
 import { responsive } from "../utils/responsive";
+import { RefObject } from "react";
 
 interface InputBoxProps {
+    onEnter: () => void;
+    inputRef: RefObject<TextInput>,
+    hideInput: boolean;
     boxPlaceholder: string;
 }
 
-function InputBox ({boxPlaceholder}: InputBoxProps) {
+function InputBox ({onEnter, inputRef, hideInput, boxPlaceholder}: InputBoxProps) {
     return (
-        <TextInput 
+        <TextInput
+            ref={inputRef}
+            onSubmitEditing={onEnter}
             style={{
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
@@ -21,6 +27,7 @@ function InputBox ({boxPlaceholder}: InputBoxProps) {
                 color: '#000000ff',
                 backgroundColor: '#ffffff'
             }} 
+            secureTextEntry={hideInput}
             placeholder={boxPlaceholder}
         />
     )

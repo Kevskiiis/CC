@@ -1,6 +1,7 @@
-import { StyleSheet, View, Text, TouchableOpacity, TextInput} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, TextInput, Keyboard} from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { useState } from "react";
+import PhoneInput from 'react-native-phone-input';
+import { useState, useRef } from "react";
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
 
@@ -13,9 +14,20 @@ import InputBox from "../components/InputBox";
 type props = NativeStackScreenProps<OpeningRoutesStackParams, 'RegisterScreen'>;
 
 function RegisterScreen ({navigation}: props) {
+    // References:
+    const firstName = useRef<TextInput>(null);
+    const lastName = useRef<TextInput>(null);
+    const phoneNumber = useRef<PhoneInput>(null);
+    const email = useRef<TextInput>(null);
+    const password = useRef<TextInput>(null);
+
     const [newForm, setForm] = useState({
 
     })
+
+    function handleEditChange (object: React.RefObject<TextInput | PhoneInput>) {
+        object.current?.focus()
+    }   
 
     return (
         <KeyboardAwareScrollView
@@ -36,15 +48,32 @@ function RegisterScreen ({navigation}: props) {
                 {/* New User Entries */}
                 <View style={RegisterStyles.inputsContainer}>
                     <Text style={RegisterStyles.label}>First Name</Text>
-                    <InputBox boxPlaceholder="First Name"/>
+                    <TextInput ref={firstName} onSubmitEditing={() => {
+                        lastName.current?.focus();
+                        Keyboard.isVisible();
+                    }} style={RegisterStyles.textInput} placeholder="First Name" />
+
                     <Text style={RegisterStyles.label}>Last Name</Text>
-                    <InputBox boxPlaceholder="Last Name"/>
+                    <TextInput ref={lastName} style={RegisterStyles.textInput} placeholder="Last Name" />
+
                     <Text style={RegisterStyles.label}>Phone Number</Text>
-                    <InputBox boxPlaceholder="Phone Number"/>
+                    <PhoneInput
+                        ref={phoneNumber}
+                        initialCountry="us"
+                        autoFormat={true}
+                        style={RegisterStyles.phoneInput}
+                        textStyle={{ fontSize: responsive.number(16) }}
+                        flagStyle={{ width: responsive.number(30), height: responsive.number(20)}}
+                    />
+
                     <Text style={RegisterStyles.label}>Email</Text>
-                    <InputBox boxPlaceholder="Email"/>
+                    <TextInput ref={email} style={RegisterStyles.textInput} placeholder="Email" />
+
                     <Text style={RegisterStyles.label}>Password</Text>
-                    <InputBox boxPlaceholder="Password"/>
+                    <TextInput ref={password} style={RegisterStyles.textInput} secureTextEntry={true} placeholder="Password" onSubmitEditing={() => {
+                        Keyboard.dismiss();
+                    }}/>
+
                     <TouchableOpacity style={RegisterStyles.button}>
                         <Text style={RegisterStyles.buttonText}>Create Account</Text>
                     </TouchableOpacity>
@@ -137,4 +166,30 @@ const RegisterStyles = StyleSheet.create({
         height: responsive.number(600),
         // backgroundColor: '#ba3636ff'
     },
+    phoneInput: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingLeft: 10,
+        borderRadius: responsive.number(10),
+        borderWidth: responsive.number(4),
+        fontSize: responsive.number(16),
+        height: responsive.number(50),
+        width: '100%',
+        color: '#000000ff',
+        backgroundColor: '#ffffff'
+    },
+    textInput: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        paddingLeft: 10,
+        borderRadius: responsive.number(10),
+        borderWidth: responsive.number(4),
+        fontSize: responsive.number(16),
+        height: responsive.number(50),
+        width: '100%',
+        color: '#000000ff',
+        backgroundColor: '#ffffff'
+    }
 }) 
