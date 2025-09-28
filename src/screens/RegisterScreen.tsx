@@ -45,7 +45,7 @@ function RegisterScreen ({navigation}: props) {
                 >
                     <View style={RegisterStyles.formContainer}>
                         <Appbar.Header style={RegisterStyles.appBar}>
-                            <Appbar.Content titleStyle={RegisterStyles.appBarTitle} title="Create Account" color="#DDA853"/>
+                            <Appbar.Content titleStyle={RegisterStyles.appBarTitle} title="CREATE ACCOUNT" color="#DDA853"/>
                             <Appbar.Action style={RegisterStyles.appBarItem} icon="arrow-left" color="#1a1a1aff" onPress={() => navigation.goBack()} />
                         </Appbar.Header>
                         <TextInput 
@@ -58,7 +58,16 @@ function RegisterScreen ({navigation}: props) {
                             activeUnderlineColor="#1a1a1aff"
                         >
                         </TextInput>
-                        <TextInput style={RegisterStyles.textInput} label="Last Name" placeholder="White" error={false} mode="flat"></TextInput>
+                        <TextInput 
+                            style={RegisterStyles.textInput} 
+                            label="Last Name" 
+                            placeholder="White" 
+                            error={false} 
+                            mode="flat"
+                            underlineColor="#1a1a1aff"
+                            activeUnderlineColor="#1a1a1aff"
+                        >  
+                        </TextInput>
                         <PhoneInput
                             // ref={phoneNumber}
                             initialCountry="us"
@@ -73,9 +82,29 @@ function RegisterScreen ({navigation}: props) {
                             //     email.current?.focus();
                             // }}
                         />
-                        <TextInput style={RegisterStyles.textInput} label="Email" placeholder="example@gmail.com" error={false} mode="flat"></TextInput>
-                        <TextInput style={RegisterStyles.textInput} label="Password" placeholder="Example14!" error={false} mode="flat"></TextInput>
-                        <Button style={RegisterStyles.submitButton} textColor="#DDA853">SIGN UP</Button>
+                        <TextInput 
+                            style={RegisterStyles.textInput} 
+                            label="Email" 
+                            placeholder="example@gmail.com" 
+                            error={false} 
+                            mode="flat"
+                            underlineColor="#1a1a1aff"
+                            activeUnderlineColor="#1a1a1aff"
+                        >
+                        </TextInput>
+                        <TextInput 
+                            style={RegisterStyles.textInput} 
+                            label="Password" 
+                            placeholder="Example14!" 
+                            error={false} 
+                            mode="flat"
+                            underlineColor="#1a1a1aff"
+                            activeUnderlineColor="#1a1a1aff"
+                        >
+                        </TextInput>
+                        <TouchableOpacity style={RegisterStyles.submitButton}>
+                            <Text style={RegisterStyles.submitButtonText}>SIGN UP</Text>
+                        </TouchableOpacity>
                     </View>
                 </KeyboardAwareScrollView>
             </SafeAreaView>
@@ -99,6 +128,11 @@ const RegisterStyles = StyleSheet.create({
         borderWidth: responsive.number(2),
         backgroundColor: '#1a1a1aff'
     },
+    submitButtonText: {
+        fontWeight: '500',
+        fontSize: responsive.number(15),
+        color: '#DDA853'
+    },
     textInput: {
         flexDirection: 'row',
         width: responsive.number(300),
@@ -118,7 +152,7 @@ const RegisterStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontFamily: '300',
-        fontSize: responsive.number(22)
+        fontSize: responsive.number(20)
     },
     appBarItem: {
         width: responsive.number(100),

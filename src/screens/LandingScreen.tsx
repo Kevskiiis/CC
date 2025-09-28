@@ -1,8 +1,10 @@
-import { Button, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
 import { StatusBar } from 'expo-status-bar';
 
+// React Native Paper:
+import { responsive } from '../utils/responsive';
 
 type props = NativeStackScreenProps<OpeningRoutesStackParams, 'LandingScreen'>; 
 
@@ -33,28 +35,29 @@ const OpeninScreenStyle = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#D2C1B6',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: responsive.number(20)
   },
   logo: {
-    width: 150,
-    height: 150
+    width: responsive.number(230),
+    height: responsive.number(200),
+    backgroundColor: '#3b4150ff'
   },
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
-    borderWidth: 4,
-    borderColor: '#000000ff',
-    width: 220,
-    height: 60,
-    margin: 5,
-    backgroundColor: '#F5F5F5'
+    borderRadius: responsive.number(6),
+    borderWidth: responsive.number(4),
+    borderColor: '#1a1a1aff',
+    width: responsive.number(230),
+    height: responsive.number(65),
+    backgroundColor: '#1a1a1aff'
   },
   buttonText: {
-    fontSize: 20,
-    fontWeight: '500',
-    fontFamily: ''
+    fontSize: responsive.number(20),
+    fontWeight: '700',
+    color: '#DDA853'
   }
 });
