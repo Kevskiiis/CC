@@ -48,9 +48,27 @@ function RegisterScreen ({navigation}: props) {
                             <Appbar.Content titleStyle={RegisterStyles.appBarTitle} title="LOGIN" color="#DDA853"/>
                             <Appbar.Action style={RegisterStyles.appBarItem} icon="arrow-left" color="#1a1a1aff" onPress={() => navigation.goBack()} />
                         </Appbar.Header>
-                        <TextInput style={RegisterStyles.textInput} label="Email" placeholder="example@gmail.com" error={false} mode="flat"></TextInput>
+                        <TextInput 
+                            style={RegisterStyles.textInput} 
+                            label="Email" 
+                            placeholder="example@gmail.com" 
+                            error={false} 
+                            mode="flat"
+                            underlineColor="#1a1a1aff"
+                            activeUnderlineColor="#1a1a1aff"
+                        >
+                        </TextInput>
                         <View>
-                            <TextInput style={RegisterStyles.textInput} label="Password" placeholder="Example14!" error={false} mode="flat"></TextInput>
+                            <TextInput 
+                                style={RegisterStyles.textInput} 
+                                label="Password" 
+                                placeholder="Example14!" 
+                                error={false} 
+                                mode="flat"
+                                underlineColor="#1a1a1aff"
+                                activeUnderlineColor="#1a1a1aff"
+                            >
+                            </TextInput>
                             <Button style={RegisterStyles.forgotPassword} textColor="#0237beff">Forgot Password?</Button>
                         </View>
                         <TouchableOpacity style={RegisterStyles.submitButton}>
