@@ -58,6 +58,7 @@ const OpeninScreenStyle = StyleSheet.create({
   buttonText: {
     fontSize: responsive.number(20),
     fontWeight: '700',
-    color: '#DDA853'
+    color: '#DDA853',
+    letterSpacing: responsive.number(2)
   }
 });

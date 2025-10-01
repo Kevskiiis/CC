@@ -16,22 +16,30 @@ import AppbarBackAction from "react-native-paper/lib/typescript/components/Appba
 
 type props = NativeStackScreenProps<OpeningRoutesStackParams, 'RegisterScreen'>;
 
+type registerForm = {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    email: string;
+    password: string;
+}
+
 function RegisterScreen ({navigation}: props) {
-    // References:
-    // const firstName = useRef<TextInput>(null);
-    // const lastName = useRef<TextInput>(null);
-    // const phoneNumber = useRef<PhoneInput>(null);
-    // const email = useRef<TextInput>(null);
-    // const password = useRef<TextInput>(null);
-
-    // States:
-    const [newForm, setForm] = useState({
-
+    const [registerForm, setForm] = useState<registerForm>({
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        email: '',
+        password: ''
     })
 
-    // function handleEditChange (object: React.RefObject<TextInput | PhoneInput>) {
-    //     object.current?.focus()
-    // }   
+    function handleChange (inputName: string, newText: string) {
+        setForm((prevValue) => ({
+            ...prevValue,
+            [inputName]: newText
+        }));
+        console.log(registerForm);
+    }   
 
     return (
         <SafeAreaProvider>
@@ -56,6 +64,8 @@ function RegisterScreen ({navigation}: props) {
                             mode="flat"
                             underlineColor="#1a1a1aff"
                             activeUnderlineColor="#1a1a1aff"
+                            value={registerForm.firstName}
+                            onChangeText={(newText) => handleChange('firstName', newText)}
                         >
                         </TextInput>
                         <TextInput 
@@ -66,6 +76,8 @@ function RegisterScreen ({navigation}: props) {
                             mode="flat"
                             underlineColor="#1a1a1aff"
                             activeUnderlineColor="#1a1a1aff"
+                            value={registerForm.lastName}
+                            onChangeText={(newText) => handleChange('lastName', newText)}
                         >  
                         </TextInput>
                         <PhoneInput
@@ -81,6 +93,8 @@ function RegisterScreen ({navigation}: props) {
                             // onPressConfirm={() =>{
                             //     email.current?.focus();
                             // }}
+                            initialValue={registerForm.phoneNumber}
+                            onChangePhoneNumber={(newText) => handleChange('phoneNumber', newText)}
                         />
                         <TextInput 
                             style={RegisterStyles.textInput} 
@@ -90,16 +104,20 @@ function RegisterScreen ({navigation}: props) {
                             mode="flat"
                             underlineColor="#1a1a1aff"
                             activeUnderlineColor="#1a1a1aff"
+                            value={registerForm.email}
+                            onChangeText={(newText) => handleChange('email', newText)}
                         >
                         </TextInput>
                         <TextInput 
                             style={RegisterStyles.textInput} 
                             label="Password" 
-                            placeholder="Example14!" 
+                            placeholder="Password1!" 
                             error={false} 
                             mode="flat"
                             underlineColor="#1a1a1aff"
                             activeUnderlineColor="#1a1a1aff"
+                            value={registerForm.password}
+                            onChangeText={(newText) => handleChange('password', newText)}
                         >
                         </TextInput>
                         <TouchableOpacity style={RegisterStyles.submitButton}>
@@ -131,7 +149,8 @@ const RegisterStyles = StyleSheet.create({
     submitButtonText: {
         fontWeight: '500',
         fontSize: responsive.number(15),
-        color: '#DDA853'
+        color: '#DDA853',
+        letterSpacing: responsive.number(2)
     },
     textInput: {
         flexDirection: 'row',
@@ -152,7 +171,8 @@ const RegisterStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontFamily: '300',
-        fontSize: responsive.number(20)
+        fontSize: responsive.number(20),
+        letterSpacing: responsive.number(0.5)
     },
     appBarItem: {
         width: responsive.number(100),

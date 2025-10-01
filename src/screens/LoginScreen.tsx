@@ -16,22 +16,28 @@ import AppbarBackAction from "react-native-paper/lib/typescript/components/Appba
 
 type props = NativeStackScreenProps<OpeningRoutesStackParams, 'RegisterScreen'>;
 
+type loginForm = {
+    email: string;
+    password: string;
+}
+
 function RegisterScreen ({navigation}: props) {
-    // References:
-    // const firstName = useRef<TextInput>(null);
-    // const lastName = useRef<TextInput>(null);
-    // const phoneNumber = useRef<PhoneInput>(null);
-    // const email = useRef<TextInput>(null);
-    // const password = useRef<TextInput>(null);
+    const [loginForm, setForm] = useState<loginForm>({
+        email: '',
+        password: ''
+    });
 
-    // States:
-    const [newForm, setForm] = useState({
+    function handleChange (inputName: string, newText: string) {
+        setForm ((prevValue) => ({
+            ...prevValue,
+            [inputName]: newText
+        }))
+        console.log(loginForm);
+    }
 
-    })
+    function handleSubmit () {
 
-    // function handleEditChange (object: React.RefObject<TextInput | PhoneInput>) {
-    //     object.current?.focus()
-    // }   
+    }
 
     return (
         <SafeAreaProvider>
@@ -56,17 +62,21 @@ function RegisterScreen ({navigation}: props) {
                             mode="flat"
                             underlineColor="#1a1a1aff"
                             activeUnderlineColor="#1a1a1aff"
+                            value={loginForm.email}
+                            onChangeText={(newText) => handleChange('email', newText)}
                         >
                         </TextInput>
                         <View>
                             <TextInput 
                                 style={RegisterStyles.textInput} 
                                 label="Password" 
-                                placeholder="Example14!" 
+                                placeholder="Password1!" 
                                 error={false} 
                                 mode="flat"
                                 underlineColor="#1a1a1aff"
                                 activeUnderlineColor="#1a1a1aff"
+                                value={loginForm.password}
+                                onChangeText={(newText) => handleChange('password', newText)}
                             >
                             </TextInput>
                             <Button style={RegisterStyles.forgotPassword} textColor="#0237beff">Forgot Password?</Button>
@@ -107,7 +117,8 @@ const RegisterStyles = StyleSheet.create({
     submitButtonText: {
         fontWeight: '500',
         fontSize: responsive.number(15),
-        color: '#DDA853'
+        color: '#DDA853',
+        letterSpacing: responsive.number(2)
     },
     textInput: {
         flexDirection: 'row',
@@ -127,7 +138,8 @@ const RegisterStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         fontFamily: '800',
-        fontSize: responsive.number(20)
+        // fontSize: responsive.number(20),
+        letterSpacing: responsive.number(0.5)
     },
     appBarItem: {
         width: responsive.number(100),
