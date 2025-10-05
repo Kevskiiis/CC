@@ -3,9 +3,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import HomeScreen from "../screens/HomeScreen";
 import SearchScreen from "../screens/SearchScreen";
-import CreateCommunityScreen from "../screens/CreateScreen";
-import ReelsScreen from "../screens/CommunityScreen";
-import ProfileScreen from "../screens/ProfileScreen";
+import CreateScreen from "../screens/CreateScreen";
+import CommunityScreen from "../screens/CommunityScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,8 +38,8 @@ export default function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="CreateCommunity"
-        component={CreateCommunityScreen}
+        name="Create"
+        component={CreateScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="plus-box-outline" color={color} size={size} />
@@ -49,7 +49,7 @@ export default function MainTabs() {
       />
       <Tab.Screen
         name="Communities"
-        component={ReelsScreen}
+        component={CommunityScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="play-box-outline" color={color} size={size} />
@@ -57,11 +57,11 @@ export default function MainTabs() {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="Settings"
+        component={SettingsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-circle-outline" color={color} size={size} />
+            <MaterialCommunityIcons name="cog-outline" color={color} size={size} />
           ),
         }}
       />
