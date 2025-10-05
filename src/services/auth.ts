@@ -1,62 +1,90 @@
+// src/services/auth.ts
+import { supabase } from "../lib/supabase";
 import { Credentials, AuthResult } from "../types/auth";
-import { httpPostJSON } from "./http";
 
-const API_BASE = process.env.EXPO_PUBLIC_API_BASE ?? ""; // set in app config or .env
-
+/** Login with email + password (identifier is treated as email). */
 export async function verifyUser(creds: Credentials): Promise<AuthResult> {
-  // Basic client-side validation (don’t rely on this; server must validate too)
   const { identifier, password } = creds;
+
   if (!identifier?.trim() || !password?.trim()) {
-    return { ok: false, code: "VALIDATION", message: "Please enter your email/username and password." };
-  }
-  if (!API_BASE) {
-    return { ok: false, code: "UNAVAILABLE", message: "Login service is not configured yet." };
-    // When ready, set EXPO_PUBLIC_API_BASE and this will call your server.
+    return {
+      ok: false,
+      code: "VALIDATION",
+      message: "Please enter your email/username and password.",
+    };
   }
 
-  const url = `${API_BASE}/auth/login`;
   try {
-    // Typical payload; adjust keys to your API contract
-    const { ok, status, json } = await httpPostJSON<any>(url, {
-      identifier,
-      password,
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: identifier.trim(),
+      password: password.trim(),
     });
 
-    // Interpret common status codes
-    if (!ok) {
-      if (status === 400) {
-        return { ok: false, code: "VALIDATION", message: json?.message ?? "Invalid request." };
+    if (error) {
+      if (error.message?.toLowerCase().includes("invalid")) {
+        return { ok: false, code: "UNAUTHORIZED", message: "Invalid credentials." };
       }
-      if (status === 401) {
-        return { ok: false, code: "UNAUTHORIZED", message: json?.message ?? "Invalid credentials." };
-      }
-      if (status === 429) {
-        return { ok: false, code: "RATE_LIMIT", message: "Too many attempts. Try again later." };
-      }
-      return { ok: false, code: "SERVER", message: json?.message ?? "Server error. Please try again." };
+      return { ok: false, code: "SERVER", message: error.message || "Login failed." };
     }
 
-    // Success path: map the server payload to your app model.
-    // Example expected JSON (adjust to your API):
-    // { user: { id, email, username }, token: "jwt..." }
-    const user = json?.user ?? null;
-    if (!user) {
-      return { ok: false, code: "SERVER", message: "Malformed response." };
-    }
+    const u = data.user;
+    const token = data.session?.access_token;
+
+    if (!u) return { ok: false, code: "SERVER", message: "Malformed response." };
+
+    const emailString = (u.email ?? identifier).toString();
 
     return {
       ok: true,
-      user: {
-        id: String(user.id),
-        email: String(user.email),
-        username: user.username ? String(user.username) : undefined,
-      },
-      token: json?.token ? String(json.token) : undefined,
+      user: { id: String(u.id), email: emailString, username: undefined },
+      token: token ?? undefined,
     };
-  } catch (e: any) {
-    if (e?.name === "AbortError") {
-      return { ok: false, code: "NETWORK", message: "Request timed out. Check your connection." };
-    }
+  } catch {
     return { ok: false, code: "NETWORK", message: "Network error. Try again." };
   }
+}
+
+/** Register a new user (email + password). */
+export async function registerUser(email: string, password: string): Promise<AuthResult> {
+  if (!email?.trim() || !password?.trim()) {
+    return { ok: false, code: "VALIDATION", message: "Please enter email and password." };
+  }
+
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password: password.trim(),
+    });
+
+    if (error) {
+      return { ok: false, code: "SERVER", message: error.message || "Register failed." };
+    }
+
+    const u = data.user;
+    const token = data.session?.access_token;
+
+    if (!u) return { ok: false, code: "SERVER", message: "Malformed response." };
+
+    const emailString = (u.email ?? email).toString();
+
+    return {
+      ok: true,
+      user: { id: String(u.id), email: emailString, username: undefined },
+      token: token ?? undefined,
+    };
+  } catch {
+    return { ok: false, code: "NETWORK", message: "Network error. Try again." };
+  }
+}
+
+/** Sign out the current session. */
+export async function logout(): Promise<void> {
+  await supabase.auth.signOut();
+}
+
+/** Get the currently authenticated user (or null). */
+export async function getCurrentUser(): Promise<{ id: string; email?: string | null } | null> {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+  return { id: data.user.id, email: data.user.email };
 }
