@@ -1,40 +1,31 @@
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-// Pages:
-import LandingScreen from '../screens/LandingScreen';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
+import LandingScreen from "../screens/LandingScreen";
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import MainRoutes from "./MainRoutes"; // your bottom tabs/inner app
+import { useAuth } from "../context/AuthContext";
 
-// Route Params:
-export type OpeningRoutesStackParams = {
-  'LandingScreen': undefined;
-  'LoginScreen': undefined;
-  'RegisterScreen': undefined; 
+// No generics here on purpose to avoid type friction with existing screens
+const Stack = createNativeStackNavigator();
+
+export default function OpeningRoutes() {
+  const { isAuthenticated } = useAuth();
+
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {isAuthenticated ? (
+        // Signed in → go straight to your main app (tabs)
+        <Stack.Screen name="Main" component={MainRoutes} />
+      ) : (
+        // Not signed in → show your original opening flow
+        <>
+          <Stack.Screen name="LandingScreen" component={LandingScreen} />
+          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        </>
+      )}
+    </Stack.Navigator>
+  );
 }
-
-// Navigator:
-const Stack = createNativeStackNavigator<OpeningRoutesStackParams>(); 
-
-function OpeningRoutes () {
-    return (
-        <Stack.Navigator initialRouteName='LandingScreen'>
-            <Stack.Screen 
-                name='LandingScreen' 
-                component={LandingScreen} 
-                options={{headerShown: false}}
-            />
-            <Stack.Screen
-                name='LoginScreen'
-                component={LoginScreen}
-                options={{headerShown: false}}
-             />
-             <Stack.Screen
-                name='RegisterScreen'
-                component={RegisterScreen}
-                options={{headerShown: false}}
-             />
-        </Stack.Navigator>
-    );
-}
-export default OpeningRoutes;

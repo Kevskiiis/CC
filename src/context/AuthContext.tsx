@@ -2,14 +2,13 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-// This matches your original app's expectation.
 export type AuthContextType = {
   isAuthenticated: boolean;
-  signIn: () => void;
-  signOut: () => void; // <- returns void to match your App.tsx
+  signIn: () => void;          // call after successful login/register
+  signOut: () => void;         // returns void to match your App.tsx
 };
 
-export const AuthContext = createContext<AuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
@@ -19,33 +18,44 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [ready, setReady] = useState(false); // avoid initial flicker
 
-  // Try to restore an existing Supabase session on app start.
   useEffect(() => {
-    let isMounted = true;
+    let mounted = true;
+
+    // 1) Restore any existing session on app start
     (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!isMounted) return;
-      setIsAuthenticated(!!data.user);
+      const { data } = await supabase.auth.getSession();
+      if (!mounted) return;
+      setIsAuthenticated(!!data.session);
+      setReady(true);
     })();
+
+    // 2) Stay in sync with any auth changes (login, logout, token refresh)
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
     return () => {
-      isMounted = false;
+      mounted = false;
+      sub.subscription.unsubscribe();
     };
   }, []);
 
   const value = useMemo<AuthContextType>(
     () => ({
       isAuthenticated,
-      // Call this after a successful verifyUser/registerUser in your screens.
       signIn: () => setIsAuthenticated(true),
-      // Sign out of Supabase and flip state. Returns void (not Promise) to match your app.
       signOut: () => {
-        // fire and forget; if you prefer, you can await it in a try/catch
+        // fire-and-forget; you kept this API returning void
         supabase.auth.signOut().finally(() => setIsAuthenticated(false));
       },
     }),
     [isAuthenticated]
   );
+
+  // Hide navigators until we know session state, to prevent a flash
+  if (!ready) return null;
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

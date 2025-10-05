@@ -1,14 +1,14 @@
 import {StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
+
 import { StatusBar } from 'expo-status-bar';
 
 // React Native Paper:
 import { responsive } from '../utils/responsive';
 
-type props = NativeStackScreenProps<OpeningRoutesStackParams, 'LandingScreen'>; 
+type Props = NativeStackScreenProps<any>; 
 
-function LandingScreen({navigation}: props) {
+function LandingScreen({navigation}: Props) {
 
   return (
     <View style={OpeninScreenStyle.container}>

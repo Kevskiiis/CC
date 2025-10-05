@@ -3,7 +3,7 @@ import React, { useState } from "react"; // ⬅️ include React here
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { OpeningRoutesStackParams } from "../routes/OpeningRoutes";
+
 
 // React Native Paper
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -14,7 +14,7 @@ import { responsive } from "../utils/responsive";
 import { useAuth } from "../context/AuthContext";
 import { verifyUser } from "../services/auth";
 
-type Props = NativeStackScreenProps<OpeningRoutesStackParams, "LoginScreen">;
+type Props = NativeStackScreenProps<any>;
 
 type LoginForm = {
   email: string;

@@ -1,50 +1,85 @@
-// src/screens/HomeScreen.tsx
-import React, { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { useAuth } from "../context/AuthContext";
-import { getMyProfile } from "../services/profile";
-import { supabase } from "../lib/supabase";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { COLORS } from "../theme/colors"; // adjust path if needed
 
 export default function HomeScreen() {
-  const { signOut } = useAuth();
-  const [displayName, setDisplayName] = useState<string>("");
+  const [code, setCode] = useState("");
 
-  useEffect(() => {
-    (async () => {
-      // 1) Try profiles table
-      const prof = await getMyProfile();
-      if (prof.ok && prof.profile) {
-        const full = `${prof.profile.first_name ?? ""} ${prof.profile.last_name ?? ""}`.trim();
-        if (full) {
-          setDisplayName(full);
-          return;
-        }
-      }
-      // 2) Fallback to Auth metadata display_name
-      const { data } = await supabase.auth.getUser();
-      const metaName = (data.user?.user_metadata as any)?.display_name as string | undefined;
-      if (metaName && metaName.trim()) {
-        setDisplayName(metaName.trim());
-        return;
-      }
-      // 3) Fallback to email
-      setDisplayName(data.user?.email ?? "User");
-    })();
-  }, []);
+  const onJoin = () => {
+    // TODO: validate and navigate to community by code
+    console.log("Join with code:", code);
+  };
+
+  const onCreate = () => {
+    // TODO: navigate to create community flow
+    console.log("Create community");
+  };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.hi}>Welcome, {displayName}</Text>
-      <TouchableOpacity style={styles.btn} onPress={signOut}>
-        <Text style={styles.btnText}>Sign out</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter community code"
+          placeholderTextColor={COLORS.textDim}
+          value={code}
+          onChangeText={setCode}
+        />
+
+        <TouchableOpacity style={styles.primaryBtn} onPress={onJoin}>
+          <Text style={styles.primaryBtnText}>Join</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.orLabel}>or</Text>
+
+        <TouchableOpacity style={styles.primaryBtn} onPress={onCreate}>
+          <Text style={styles.primaryBtnText}>Create Community</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, alignItems: "center", justifyContent: "center" },
-  hi: { fontSize: 28, fontWeight: "700", marginBottom: 24 },
-  btn: { paddingHorizontal: 28, paddingVertical: 14, borderRadius: 12, borderWidth: 2 },
-  btnText: { fontSize: 18 },
+  screen: {
+    flex: 1,
+    backgroundColor: COLORS.background, // same app background
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 24,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  input: {
+    width: "100%",
+    height: 56,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: 16,
+    color: COLORS.text,
+    marginBottom: 16,
+  },
+  primaryBtn: {
+    width: "100%",
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: COLORS.primary, // your beige button color
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  primaryBtnText: {
+    color: COLORS.onPrimary,
+    fontWeight: "700",
+    fontSize: 20,
+  },
+  orLabel: {
+    marginVertical: 16,
+    color: COLORS.text,
+    opacity: 0.8,
+    fontSize: 18,
+  },
 });

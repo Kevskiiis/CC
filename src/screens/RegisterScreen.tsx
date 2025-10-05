@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PhoneInput from "react-native-phone-input";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { OpeningRoutesStackParams } from "../routes/OpeningRoutes";
+
 
 // UI
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -17,7 +17,7 @@ import { registerUser } from "../services/auth";
 import { upsertProfile } from "../services/profile";
 import { supabase } from "../lib/supabase"; // ⬅️ needed to set Auth display_name
 
-type Props = NativeStackScreenProps<OpeningRoutesStackParams, "RegisterScreen">;
+type Props = NativeStackScreenProps<any>;
 
 type RegisterForm = {
   firstName: string;

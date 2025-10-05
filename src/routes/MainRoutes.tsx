@@ -1,16 +1,20 @@
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomeScreen from "../screens/HomeScreen";
+import MainTabs from "./MainTabs";
 
-export type MainRoutesStackParams = {
-  Home: undefined;
+// If you have other non-tab screens (modals/details), add them here later.
+type MainStackParamList = {
+  Tabs: undefined;
+  // Details: { id: string };
 };
 
-const Stack = createNativeStackNavigator<MainRoutesStackParams>();
+const Stack = createNativeStackNavigator<MainStackParamList>();
 
 export default function MainRoutes() {
   return (
-    <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* 👇 This mounts your bottom tab navigator */}
+      <Stack.Screen name="Tabs" component={MainTabs} />
     </Stack.Navigator>
   );
 }
