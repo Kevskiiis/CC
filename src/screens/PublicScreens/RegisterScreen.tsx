@@ -3,41 +3,41 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import PhoneInput from 'react-native-phone-input';
 import { useState, useRef } from "react";
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
+import type { PublicRoutesStackParams } from '../../routes/PublicRoutes';
 
 // React Native Paper Library Components:
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { TextInput, Appbar, Button, Icon} from 'react-native-paper';
-import TextInputMask from "react-native-text-input-mask";
+import { TextInput, Appbar} from 'react-native-paper';
 
 // Responsive Utility for Styling:
-import { responsive } from "../utils/responsive";
-import AppbarBackAction from "react-native-paper/lib/typescript/components/Appbar/AppbarBackAction";
+import { responsive } from "../../utils/responsive";
 
-type props = NativeStackScreenProps<OpeningRoutesStackParams, 'RegisterScreen'>;
+type props = NativeStackScreenProps<PublicRoutesStackParams, 'RegisterScreen'>;
 
-type loginForm = {
+type registerForm = {
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
     email: string;
     password: string;
 }
 
 function RegisterScreen ({navigation}: props) {
-    const [loginForm, setForm] = useState<loginForm>({
+    const [registerForm, setForm] = useState<registerForm>({
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
         email: '',
         password: ''
-    });
+    })
 
     function handleChange (inputName: string, newText: string) {
-        setForm ((prevValue) => ({
+        setForm((prevValue) => ({
             ...prevValue,
             [inputName]: newText
-        }))
-        console.log(loginForm);
-    }
-
-    function handleSubmit () {
-
-    }
+        }));
+        console.log(registerForm);
+    }   
 
     return (
         <SafeAreaProvider>
@@ -46,14 +46,54 @@ function RegisterScreen ({navigation}: props) {
                     // style={RegisterStyles.scrollViewOutside}
                     contentContainerStyle={RegisterStyles.scrollViewInside}
                     enableOnAndroid={true}
-                    extraScrollHeight={responsive.number(20)}
+                    extraScrollHeight={responsive.number(80)}
                     enableAutomaticScroll={true}
                 >
                     <View style={RegisterStyles.formContainer}>
                         <Appbar.Header style={RegisterStyles.appBar}>
-                            <Appbar.Content titleStyle={RegisterStyles.appBarTitle} title="LOGIN" color="#DDA853"/>
+                            <Appbar.Content titleStyle={RegisterStyles.appBarTitle} title="CREATE ACCOUNT" color="#DDA853"/>
                             <Appbar.Action style={RegisterStyles.appBarItem} icon="arrow-left" color="#1a1a1aff" onPress={() => navigation.goBack()} />
                         </Appbar.Header>
+                        <TextInput 
+                            style={RegisterStyles.textInput} 
+                            label="First Name" 
+                            placeholder="John" 
+                            error={false} 
+                            mode="flat"
+                            underlineColor="#1a1a1aff"
+                            activeUnderlineColor="#1a1a1aff"
+                            value={registerForm.firstName}
+                            onChangeText={(newText) => handleChange('firstName', newText)}
+                        >
+                        </TextInput>
+                        <TextInput 
+                            style={RegisterStyles.textInput} 
+                            label="Last Name" 
+                            placeholder="White" 
+                            error={false} 
+                            mode="flat"
+                            underlineColor="#1a1a1aff"
+                            activeUnderlineColor="#1a1a1aff"
+                            value={registerForm.lastName}
+                            onChangeText={(newText) => handleChange('lastName', newText)}
+                        >  
+                        </TextInput>
+                        <PhoneInput
+                            // ref={phoneNumber}
+                            initialCountry="us"
+                            autoFormat={true}
+                            style={RegisterStyles.phoneInput}
+                            textStyle={{ fontSize: responsive.number(16) }}
+                            flagStyle={{ width: responsive.number(30), height: responsive.number(20)}}
+                            // onPressFlag={() => {
+                            //     console.log('Implement this later.')
+                            // }}
+                            // onPressConfirm={() =>{
+                            //     email.current?.focus();
+                            // }}
+                            initialValue={registerForm.phoneNumber}
+                            onChangePhoneNumber={(newText) => handleChange('phoneNumber', newText)}
+                        />
                         <TextInput 
                             style={RegisterStyles.textInput} 
                             label="Email" 
@@ -62,27 +102,24 @@ function RegisterScreen ({navigation}: props) {
                             mode="flat"
                             underlineColor="#1a1a1aff"
                             activeUnderlineColor="#1a1a1aff"
-                            value={loginForm.email}
+                            value={registerForm.email}
                             onChangeText={(newText) => handleChange('email', newText)}
                         >
                         </TextInput>
-                        <View>
-                            <TextInput 
-                                style={RegisterStyles.textInput} 
-                                label="Password" 
-                                placeholder="Password1!" 
-                                error={false} 
-                                mode="flat"
-                                underlineColor="#1a1a1aff"
-                                activeUnderlineColor="#1a1a1aff"
-                                value={loginForm.password}
-                                onChangeText={(newText) => handleChange('password', newText)}
-                            >
-                            </TextInput>
-                            <Button style={RegisterStyles.forgotPassword} textColor="#0237beff">Forgot Password?</Button>
-                        </View>
+                        <TextInput 
+                            style={RegisterStyles.textInput} 
+                            label="Password" 
+                            placeholder="Password1!" 
+                            error={false} 
+                            mode="flat"
+                            underlineColor="#1a1a1aff"
+                            activeUnderlineColor="#1a1a1aff"
+                            value={registerForm.password}
+                            onChangeText={(newText) => handleChange('password', newText)}
+                        >
+                        </TextInput>
                         <TouchableOpacity style={RegisterStyles.submitButton}>
-                            <Text style={RegisterStyles.submitButtonText}>SIGN IN</Text>
+                            <Text style={RegisterStyles.submitButtonText}>SIGN UP</Text>
                         </TouchableOpacity>
                     </View>
                 </KeyboardAwareScrollView>
@@ -97,13 +134,6 @@ const RegisterStyles = StyleSheet.create({
         flex: 1,
         flexDirection: 'column',
         backgroundColor: '#D2C1B6'
-    },
-    forgotPassword: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        textDecorationLine: 'underline',
-        textAlign: 'left'
-        // backgroundColor: '#000000ff'
     },
     submitButton: {
         alignItems: 'center',
@@ -133,12 +163,13 @@ const RegisterStyles = StyleSheet.create({
         width: '100%',
         height: responsive.number(80),
         backgroundColor: '#1a1a1aff',
+        // tintColor: '#fcfcfcff'
     },
     appBarTitle: {
         justifyContent: 'center',
         alignItems: 'center',
-        fontFamily: '800',
-        // fontSize: responsive.number(20),
+        fontFamily: '300',
+        fontSize: responsive.number(20),
         letterSpacing: responsive.number(0.5)
     },
     appBarItem: {
@@ -160,7 +191,7 @@ const RegisterStyles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        gap: responsive.number(20),
+        gap: responsive.number(15),
         paddingBottom: responsive.number(40),
         width: '90%',
         height: 'auto',
