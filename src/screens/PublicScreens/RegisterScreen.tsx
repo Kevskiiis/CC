@@ -12,6 +12,9 @@ import { TextInput, Appbar} from 'react-native-paper';
 // Responsive Utility for Styling:
 import { responsive } from "../../utils/responsive";
 
+// Contexts:
+import { useAuth } from "../../contexts/AuthContext";
+
 type props = NativeStackScreenProps<PublicRoutesStackParams, 'RegisterScreen'>;
 
 type registerForm = {
@@ -31,13 +34,24 @@ function RegisterScreen ({navigation}: props) {
         password: ''
     })
 
+    const {isAuthenticated, createAccount} = useAuth(); 
+
     function handleChange (inputName: string, newText: string) {
         setForm((prevValue) => ({
             ...prevValue,
             [inputName]: newText
         }));
         console.log(registerForm);
-    }   
+    }
+
+    const handleSubmit = () => {
+        try {
+            createAccount(registerForm);
+        }
+        catch {
+
+        }
+    }
 
     return (
         <SafeAreaProvider>
@@ -118,7 +132,7 @@ function RegisterScreen ({navigation}: props) {
                             onChangeText={(newText) => handleChange('password', newText)}
                         >
                         </TextInput>
-                        <TouchableOpacity style={RegisterStyles.submitButton}>
+                        <TouchableOpacity style={RegisterStyles.submitButton} onPress={handleSubmit}>
                             <Text style={RegisterStyles.submitButtonText}>SIGN UP</Text>
                         </TouchableOpacity>
                     </View>

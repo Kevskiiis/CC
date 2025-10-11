@@ -10,6 +10,9 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { TextInput, Appbar, Button, Icon} from 'react-native-paper';
 import TextInputMask from "react-native-text-input-mask";
 
+// Authenticaton Context:
+import { useAuth } from "../../contexts/AuthContext";
+
 // Responsive Utility for Styling:
 import { responsive } from "../../utils/responsive";
 import AppbarBackAction from "react-native-paper/lib/typescript/components/Appbar/AppbarBackAction";
@@ -27,7 +30,9 @@ function RegisterScreen ({navigation}: props) {
         password: ''
     });
 
-    function handleChange (inputName: string, newText: string) {
+    const {isAuthenticated, signIn} = useAuth();
+
+    const handleChange = (inputName: string, newText: string) => {
         setForm ((prevValue) => ({
             ...prevValue,
             [inputName]: newText
@@ -35,9 +40,9 @@ function RegisterScreen ({navigation}: props) {
         console.log(loginForm);
     }
 
-    function handleSubmit () {
-
-    }
+    const handleSubmit = () => {
+        signIn(loginForm);
+    }   
 
     return (
         <SafeAreaProvider>
@@ -81,7 +86,7 @@ function RegisterScreen ({navigation}: props) {
                             </TextInput>
                             <Button style={RegisterStyles.forgotPassword} textColor="#0237beff">Forgot Password?</Button>
                         </View>
-                        <TouchableOpacity style={RegisterStyles.submitButton}>
+                        <TouchableOpacity style={RegisterStyles.submitButton} onPress={handleSubmit}>
                             <Text style={RegisterStyles.submitButtonText}>SIGN IN</Text>
                         </TouchableOpacity>
                     </View>
