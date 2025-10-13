@@ -1,85 +1,122 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { COLORS } from "../../themes/colors"; // adjust path if needed
+import { StyleSheet, View, TouchableOpacity, Keyboard } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+// React Native Paper Library Components:
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { BottomNavigation, Text, Provider } from 'react-native-paper';
+
+import { responsive } from "../../utils/responsive";
+
+// Navigator test:
+import BottomNavigator from '../../components/BottomNavigator';
 
 export default function HomeScreen() {
-  const [code, setCode] = useState("");
-
-  const onJoin = () => {
-    // TODO: validate and navigate to community by code
-    console.log("Join with code:", code);
-  };
-
-  const onCreate = () => {
-    // TODO: navigate to create community flow
-    console.log("Create community");
-  };
-
   return (
-    <SafeAreaView style={styles.screen}>
-      <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter community code"
-          placeholderTextColor={COLORS.textDim}
-          value={code}
-          onChangeText={setCode}
-        />
-
-        <TouchableOpacity style={styles.primaryBtn} onPress={onJoin}>
-          <Text style={styles.primaryBtnText}>Join</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.orLabel}>or</Text>
-
-        <TouchableOpacity style={styles.primaryBtn} onPress={onCreate}>
-          <Text style={styles.primaryBtnText}>Create Community</Text>
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+      <SafeAreaProvider>
+          <SafeAreaView style={RegisterStyles.screen}>
+              <KeyboardAwareScrollView
+                // style={RegisterStyles.scrollViewOutside}
+                contentContainerStyle={RegisterStyles.scrollViewInside}
+                enableOnAndroid={true}
+                extraScrollHeight={responsive.number(20)}
+                enableAutomaticScroll={true}
+              ></KeyboardAwareScrollView>
+              <BottomNavigator/>
+          </SafeAreaView>
+      </SafeAreaProvider>
   );
 }
 
-const styles = StyleSheet.create({
+const RegisterStyles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: COLORS.background, // same app background
+    flexDirection: "column",
+    backgroundColor: "#D2C1B6",
   },
-  container: {
-    flex: 1,
-    paddingHorizontal: 24,
+  forgotPassword: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    textDecorationLine: "underline",
+    textAlign: "left",
+    // backgroundColor: '#000000ff'
+  },
+  submitButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: responsive.number(300),
+    height: responsive.number(60),
+    borderRadius: responsive.number(4),
+    borderWidth: responsive.number(2),
+    backgroundColor: "#1a1a1aff",
+  },
+  submitButtonText: {
+    fontWeight: "500",
+    fontSize: responsive.number(15),
+    color: "#DDA853",
+    letterSpacing: responsive.number(2),
+  },
+  textInput: {
+    flexDirection: "row",
+    width: responsive.number(300),
+    height: responsive.number(60),
+    backgroundColor: "#ecececff",
+  },
+  appBar: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    width: "100%",
+    height: responsive.number(80),
+    backgroundColor: "#1a1a1aff",
+  },
+  appBarTitle: {
     justifyContent: "center",
     alignItems: "center",
+    fontFamily: "800",
+    // fontSize: responsive.number(20),
+    letterSpacing: responsive.number(0.5),
   },
-  input: {
-    width: "100%",
-    height: 56,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.surface,
-    paddingHorizontal: 16,
-    color: COLORS.text,
-    marginBottom: 16,
+  appBarItem: {
+    width: responsive.number(100),
+    height: responsive.number(60),
+    color: "#ffffffff",
+    // fontWeight: '700',
+    backgroundColor: "#DDA853",
   },
-  primaryBtn: {
-    width: "100%",
-    height: 56,
-    borderRadius: 12,
-    backgroundColor: COLORS.primary, // your beige button color
+  scrollViewInside: {
+    flexGrow: 1,
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+    gap: responsive.number(20),
+    backgroundColor: "#D2C1B6",
   },
-  primaryBtnText: {
-    color: COLORS.onPrimary,
-    fontWeight: "700",
-    fontSize: 20,
+  formContainer: {
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    gap: responsive.number(20),
+    paddingBottom: responsive.number(40),
+    width: "90%",
+    height: "auto",
+    borderWidth: responsive.number(6),
+    borderRadius: responsive.number(8),
+    borderColor: "#1a1a1aff",
+    backgroundColor: "#F5F5F0",
   },
-  orLabel: {
-    marginVertical: 16,
-    color: COLORS.text,
-    opacity: 0.8,
-    fontSize: 18,
+  phoneInput: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingLeft: 10,
+    borderTopRightRadius: responsive.number(4),
+    borderTopLeftRadius: responsive.number(4),
+    borderBottomWidth: responsive.number(1 / 2),
+    borderColor: "#1a1a1aff",
+    fontSize: responsive.number(16),
+    width: responsive.number(300),
+    height: responsive.number(60),
+    color: "#1a1a1aff",
+    backgroundColor: "#ecececff",
   },
 });
