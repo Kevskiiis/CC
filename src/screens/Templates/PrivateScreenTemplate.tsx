@@ -1,11 +1,27 @@
+import { ReactNode } from 'react';
+import { StyleSheet } from 'react-native';
+// Libraries:
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { Provider as PaperProvider } from "react-native-paper";
 
-// Screens:
-import HomeScreen from "../PrivateScreens/HomeScreen";
-import CommunityScreen from "../PrivateScreens/CommunityScreen";
-import ProfileScreen from "../PrivateScreens/ProfileScreen";
-import PostScreen from "../PrivateScreens/PostScreen";
-
+// Components:
+import BottomNavigator from '../../components/BottomNavigator';
 
 export default function PrivateScreenTemplate () {
-
+    return (
+        <SafeAreaProvider>
+            <PaperProvider>
+                <SafeAreaView style={PrivateScreenTemplateStyles.screen}>
+                    <BottomNavigator/>
+                </SafeAreaView>
+            </PaperProvider>
+        </SafeAreaProvider>
+    );
 }
+
+const PrivateScreenTemplateStyles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: '#000000ff'
+    }
+})

@@ -8,12 +8,12 @@ import { BottomNavigation, Text, Provider } from 'react-native-paper';
 import { responsive } from "../../utils/responsive";
 
 // Navigator test:
-import BottomNavigator from '../../components/BottomNavigator';
+// import BottomNavigator from '../../components/BottomNavigator';
 
 export default function HomeScreen() {
   return (
-      <SafeAreaProvider>
-          <SafeAreaView style={RegisterStyles.screen}>
+      // <SafeAreaProvider>
+          <View style={RegisterStyles.screen}>
               <KeyboardAwareScrollView
                 // style={RegisterStyles.scrollViewOutside}
                 contentContainerStyle={RegisterStyles.scrollViewInside}
@@ -21,9 +21,8 @@ export default function HomeScreen() {
                 extraScrollHeight={responsive.number(20)}
                 enableAutomaticScroll={true}
               ></KeyboardAwareScrollView>
-              <BottomNavigator/>
-          </SafeAreaView>
-      </SafeAreaProvider>
+          </View>
+      // </SafeAreaProvider>
   );
 }
 

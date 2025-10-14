@@ -1,11 +1,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 // Screens:
-import HomeScreen from '../screens/PrivateScreens/HomeScreen';
+import PrivateScreenTemplate from "../screens/Templates/PrivateScreenTemplate";
 
 // Route Params:
 export type PrivateRoutesStackParams = {
-  'HomeScreen': undefined;
+  'PrivateScreenTemplates': undefined;
 }
 
 // Navigator:
@@ -13,10 +13,10 @@ const Stack = createNativeStackNavigator<PrivateRoutesStackParams>();
 
 function PrivateRoutes () { 
     return (
-        <Stack.Navigator initialRouteName='HomeScreen'>
+        <Stack.Navigator initialRouteName='PrivateScreenTemplates'>
             <Stack.Screen
-                name="HomeScreen"
-                component={HomeScreen}
+                name="PrivateScreenTemplates"
+                component={PrivateScreenTemplate}
                 options={{headerShown: false}}
             />
         </Stack.Navigator>
