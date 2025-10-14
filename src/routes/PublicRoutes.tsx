@@ -1,22 +1,22 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+// import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-// Pages:
-import LandingScreen from '../screens/LandingScreen';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
+// Screens:
+import LandingScreen from '../screens/PublicScreens/LandingScreen';
+import LoginScreen from '../screens/PublicScreens/LoginScreen';
+import RegisterScreen from '../screens/PublicScreens/RegisterScreen';
 
 // Route Params:
-export type OpeningRoutesStackParams = {
+export type PublicRoutesStackParams = {
   'LandingScreen': undefined;
   'LoginScreen': undefined;
   'RegisterScreen': undefined; 
 }
 
 // Navigator:
-const Stack = createNativeStackNavigator<OpeningRoutesStackParams>(); 
+const Stack = createNativeStackNavigator<PublicRoutesStackParams>(); 
 
-function OpeningRoutes () {
+function PublicRoutes () {
     return (
         <Stack.Navigator initialRouteName='LandingScreen'>
             <Stack.Screen 
@@ -37,4 +37,4 @@ function OpeningRoutes () {
         </Stack.Navigator>
     );
 }
-export default OpeningRoutes;
+export default PublicRoutes;

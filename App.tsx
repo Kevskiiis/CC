@@ -1,32 +1,18 @@
 import {useState} from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StyleSheet } from 'react-native';
 
 // Routes:
-import OpeningRoutes from './src/routes/OpeningRoutes';
+import RoutesContainer from './src/routes/RoutesContainer';
 
-// Navigators:
-const Stack = createNativeStackNavigator(); 
+// Contexts:
+import { AuthProvider } from './src/contexts/AuthContext';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); 
-
-
-  return (
-    <NavigationContainer>
-      
-      {!isAuthenticated && 
-        <OpeningRoutes/>
-      }
-      {isAuthenticated &&
-        <Text>Hi</Text>
-      }
-
-    </NavigationContainer>
-  
-  );
+    return (
+        <AuthProvider>
+            <RoutesContainer/>
+        </AuthProvider>
+    );
 }
 
 const styles = StyleSheet.create({

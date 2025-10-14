@@ -3,18 +3,19 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import PhoneInput from 'react-native-phone-input';
 import { useState, useRef } from "react";
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { OpeningRoutesStackParams } from '../routes/OpeningRoutes';
+import type { PublicRoutesStackParams } from '../../routes/PublicRoutes';
 
 // React Native Paper Library Components:
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { TextInput, Appbar, Button, Icon} from 'react-native-paper';
-import TextInputMask from "react-native-text-input-mask";
+import { TextInput, Appbar} from 'react-native-paper';
 
 // Responsive Utility for Styling:
-import { responsive } from "../utils/responsive";
-import AppbarBackAction from "react-native-paper/lib/typescript/components/Appbar/AppbarBackAction";
+import { responsive } from "../../utils/responsive";
 
-type props = NativeStackScreenProps<OpeningRoutesStackParams, 'RegisterScreen'>;
+// Contexts:
+import { useAuth } from "../../contexts/AuthContext";
+
+type props = NativeStackScreenProps<PublicRoutesStackParams, 'RegisterScreen'>;
 
 type registerForm = {
     firstName: string;
@@ -33,13 +34,24 @@ function RegisterScreen ({navigation}: props) {
         password: ''
     })
 
+    const {isAuthenticated, createAccount} = useAuth(); 
+
     function handleChange (inputName: string, newText: string) {
         setForm((prevValue) => ({
             ...prevValue,
             [inputName]: newText
         }));
         console.log(registerForm);
-    }   
+    }
+
+    const handleSubmit = () => {
+        try {
+            createAccount(registerForm);
+        }
+        catch {
+
+        }
+    }
 
     return (
         <SafeAreaProvider>
@@ -120,7 +132,7 @@ function RegisterScreen ({navigation}: props) {
                             onChangeText={(newText) => handleChange('password', newText)}
                         >
                         </TextInput>
-                        <TouchableOpacity style={RegisterStyles.submitButton}>
+                        <TouchableOpacity style={RegisterStyles.submitButton} onPress={handleSubmit}>
                             <Text style={RegisterStyles.submitButtonText}>SIGN UP</Text>
                         </TouchableOpacity>
                     </View>
