@@ -16,8 +16,6 @@ export default function HomeDirectory() {
 
     const routes: Record<RouteKey, JSX.Element> = {
         home: <HomeScreen />,
-    //   profile: <ProfileScreen />,
-    //   settings: <SettingsScreen />,
     };
 
   return (

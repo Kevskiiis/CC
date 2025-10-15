@@ -4,13 +4,13 @@ import { BottomNavigation} from 'react-native-paper';
 import { responsive } from "../utils/responsive";
 
 // Screens:
-// import HomeScreen from "../screens/PrivateScreens/HomeScreen";
 import CommunityScreen from "../screens/PrivateScreens/CommunityScreen";
 import PostScreen from "../screens/PrivateScreens/PostScreen";
 import ProfileScreen from "../screens/PrivateScreens/ProfileScreen";
 
 // Directories:
 import HomeDirectory from "../directories/HomeDirectory";
+import CreateDirectory from "../directories/CreateDirectory";
 
 // Themes:
 import {COLORS} from '../themes/colors';
@@ -26,7 +26,7 @@ export default function BottomNavigator () {
 
     const renderScene = BottomNavigation.SceneMap({
         home: HomeDirectory,
-        create: PostScreen,
+        create: CreateDirectory,
         communities: CommunityScreen,
         profile: ProfileScreen
     })

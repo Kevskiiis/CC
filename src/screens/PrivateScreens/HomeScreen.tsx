@@ -10,7 +10,7 @@ import { responsive } from "../../utils/responsive";
 export default function HomeScreen() {
   return (
           <View style={RegisterStyles.screen}>
-              <Text>Hello Worlds</Text>
+              <Text>Hello World</Text>
           </View>
   );
 }
