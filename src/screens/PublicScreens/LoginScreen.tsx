@@ -30,7 +30,7 @@ function RegisterScreen ({navigation}: props) {
         password: ''
     });
 
-    const {isAuthenticated, signIn} = useAuth();
+    const {signIn} = useAuth();
 
     const handleChange = (inputName: string, newText: string) => {
         setForm ((prevValue) => ({

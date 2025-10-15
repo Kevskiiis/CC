@@ -7,22 +7,11 @@ import { BottomNavigation, Text, Provider } from 'react-native-paper';
 
 import { responsive } from "../../utils/responsive";
 
-// Navigator test:
-// import BottomNavigator from '../../components/BottomNavigator';
-
 export default function HomeScreen() {
   return (
-      // <SafeAreaProvider>
           <View style={RegisterStyles.screen}>
-              <KeyboardAwareScrollView
-                // style={RegisterStyles.scrollViewOutside}
-                contentContainerStyle={RegisterStyles.scrollViewInside}
-                enableOnAndroid={true}
-                extraScrollHeight={responsive.number(20)}
-                enableAutomaticScroll={true}
-              ></KeyboardAwareScrollView>
+              <Text>Hello Worlds</Text>
           </View>
-      // </SafeAreaProvider>
   );
 }
 
