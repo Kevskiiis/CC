@@ -12,6 +12,8 @@ export const COLORS = {
   // Text color that appears ON top of primary surfaces (button label color)
   onPrimary: '#DDAB53',       // <- alias for your beige/gold
 
+  primaryTextDark: '#a0814bff',
+
   // Accent text you’ve been using on primary
   primaryText: '#DDAB53',
 

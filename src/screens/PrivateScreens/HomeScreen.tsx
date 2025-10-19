@@ -6,11 +6,13 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { BottomNavigation, Text, Provider } from 'react-native-paper';
 
 import { responsive } from "../../utils/responsive";
+import TopNavigator from "../../components/TopNavigator";
 
 export default function HomeScreen() {
   return (
           <View style={RegisterStyles.screen}>
-              <Text>Hello World</Text>
+              <TopNavigator/>
+              <Text style={{flexGrow: 1}}>Hello World</Text>
           </View>
   );
 }

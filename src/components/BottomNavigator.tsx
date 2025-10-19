@@ -1,16 +1,14 @@
 import { StyleSheet, View } from "react-native";
 import { useState } from "react";
 import { BottomNavigation} from 'react-native-paper';
-import { responsive } from "../utils/responsive";
 
 // Screens:
-import CommunityScreen from "../screens/PrivateScreens/CommunityScreen";
-import PostScreen from "../screens/PrivateScreens/PostScreen";
 import ProfileScreen from "../screens/PrivateScreens/ProfileScreen";
 
 // Directories:
 import HomeDirectory from "../directories/HomeDirectory";
 import CreateDirectory from "../directories/CreateDirectory";
+import CommunityDirectory from "../directories/CommunityDirectory";
 
 // Themes:
 import {COLORS} from '../themes/colors';
@@ -27,7 +25,7 @@ export default function BottomNavigator () {
     const renderScene = BottomNavigation.SceneMap({
         home: HomeDirectory,
         create: CreateDirectory,
-        communities: CommunityScreen,
+        communities: CommunityDirectory,
         profile: ProfileScreen
     })
 
@@ -37,8 +35,8 @@ export default function BottomNavigator () {
                 navigationState={{index, routes}}
                 onIndexChange={setIndex}
                 renderScene ={renderScene}
-                inactiveColor="#8c1f1fff"
-                activeColor="#010101ff"
+                inactiveColor={COLORS.primaryText}
+                activeColor={COLORS.primaryText}
                 barStyle={BottomNavigatorStyles.barStyle} 
                 activeIndicatorStyle={BottomNavigatorStyles.activatorIndicatorStyle}
             />
@@ -51,9 +49,9 @@ const BottomNavigatorStyles = StyleSheet.create({
         flex: 1,
     },
     barStyle: {
-        backgroundColor: '#f4f4f4ff'
+        backgroundColor: COLORS.primary
     },
     activatorIndicatorStyle: {
-
+        backgroundColor: 'transparent'
     }
 });

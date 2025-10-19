@@ -19,7 +19,6 @@ export default function HomeDirectory() {
     };
 
   return (
-    // <HomeScreen/>
     <View style={{ flex: 1 }}>
         {routes[screen]}
     </View>
