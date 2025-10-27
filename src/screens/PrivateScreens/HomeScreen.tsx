@@ -6,23 +6,14 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { BottomNavigation, Text, Provider } from 'react-native-paper';
 
 import { responsive } from "../../utils/responsive";
-
-// Navigator test:
-// import BottomNavigator from '../../components/BottomNavigator';
+import TopNavigator from "../../components/TopNavigator";
 
 export default function HomeScreen() {
   return (
-      // <SafeAreaProvider>
           <View style={RegisterStyles.screen}>
-              <KeyboardAwareScrollView
-                // style={RegisterStyles.scrollViewOutside}
-                contentContainerStyle={RegisterStyles.scrollViewInside}
-                enableOnAndroid={true}
-                extraScrollHeight={responsive.number(20)}
-                enableAutomaticScroll={true}
-              ></KeyboardAwareScrollView>
+              <TopNavigator/>
+              <Text style={{flexGrow: 1}}>Hello World</Text>
           </View>
-      // </SafeAreaProvider>
   );
 }
 

@@ -97,7 +97,7 @@ export function AuthProvider ({children}: {children: React.ReactNode}) {
 
             // Insert the rest of the profile info in your 'profiles' table
             const { error: profileError } = await supabase.from("profiles").insert({
-                id: user.id,
+                profile_id: user.id,
                 first_name: firstName,
                 last_name: lastName,
                 phone_number: phoneNumber,
