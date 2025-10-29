@@ -1,4 +1,4 @@
-# Product Backlog – Sprint 3
+# Product Backlog – Sprint 2
 
 | ID | Title / Description | Priority |
 |:--|:--|:--|
