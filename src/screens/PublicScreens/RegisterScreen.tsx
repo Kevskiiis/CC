@@ -1,13 +1,16 @@
-import { StyleSheet, View, Text, TouchableOpacity, Keyboard} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Image, Keyboard} from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import PhoneInput from 'react-native-phone-input';
 import { useState, useRef } from "react";
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { PublicRoutesStackParams } from '../../routes/PublicRoutes';
+import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from "expo-file-system";
 
 // React Native Paper Library Components:
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { TextInput, Appbar} from 'react-native-paper';
+import ErrorBox from "../../components/ErrorBox";
 
 // Responsive Utility for Styling:
 import { responsive } from "../../utils/responsive";
@@ -23,6 +26,12 @@ type registerForm = {
     phoneNumber: string;
     email: string;
     password: string;
+    avatar: string | null;
+}
+
+type errorState = {
+    errorState: boolean;
+    message: string; 
 }
 
 function RegisterScreen ({navigation}: props) {
@@ -31,27 +40,93 @@ function RegisterScreen ({navigation}: props) {
         lastName: '',
         phoneNumber: '',
         email: '',
-        password: ''
+        password: '',
+        avatar: null
     })
+    const [error, setError] = useState<errorState>({
+        errorState: false,
+        message: ''
+    }); 
 
     const {isAuthenticated, createAccount} = useAuth(); 
 
-    function handleChange (inputName: string, newText: string) {
+    const pickImage = async () => {
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setForm((prev) => ({
+                ...prev,
+                avatar: result.assets[0].uri,
+            }));
+        }
+    }
+
+    const handleChange =  (inputName: string, newText: string) => {
         setForm((prevValue) => ({
             ...prevValue,
             [inputName]: newText
         }));
-        console.log(registerForm);
+        // console.log(registerForm);
     }
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         try {
-            createAccount(registerForm);
-        }
-        catch {
+            const formData = new FormData();
 
+            // Append text fields
+            formData.append("firstName", registerForm.firstName);
+            formData.append("lastName", registerForm.lastName);
+            formData.append("email", registerForm.email);
+            formData.append("password", registerForm.password);
+
+            // Append avatar if it exists
+            if (registerForm.avatar) {
+                const fileName = registerForm.avatar.split("/").pop(); // Extract filename
+                const match = /\.(\w+)$/.exec(fileName ?? "");
+                const type = match ? `image/${match[1]}` : `image`;
+
+                formData.append("avatarImage", {
+                    uri: registerForm.avatar,
+                    name: fileName,
+                    type: type,
+                } as any); // `as any` to satisfy TypeScript
+            }
+
+            // Send to backend
+            const response = await fetch("https://ccbackend-production-5adb.up.railway.app/create-account", {
+                method: "POST",
+                body: formData,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Handle successful scenario.
+            }
+            else {
+                // Handle Error Case:
+                setError({
+                    errorState: true,
+                    message: data.message
+                })
+            }
+            console.log(data);
+        } catch (err) {
+            console.error(err);
         }
-    }
+    };
 
     return (
         <SafeAreaProvider>
@@ -68,6 +143,23 @@ function RegisterScreen ({navigation}: props) {
                             <Appbar.Content titleStyle={RegisterStyles.appBarTitle} title="CREATE ACCOUNT" color="#DDA853"/>
                             <Appbar.Action style={RegisterStyles.appBarItem} icon="arrow-left" color="#1a1a1aff" onPress={() => navigation.goBack()} />
                         </Appbar.Header>
+                        {/* Error Box */}
+                        {error.errorState === true && <ErrorBox message={error.message} width={300}/>}
+
+                        {/* Register Avatar */}
+                        {registerForm.avatar && (
+                            <Image
+                                source={{ uri: registerForm.avatar }}
+                                style={{ width: 120, height: 120, borderRadius: 60 }}
+                            />
+                        )}
+
+                        <TouchableOpacity
+                            style={RegisterStyles.submitButton}
+                            onPress={pickImage}
+                        >
+                            <Text>Select Profile Picture</Text>
+                        </TouchableOpacity>
                         <TextInput 
                             style={RegisterStyles.textInput} 
                             label="First Name" 

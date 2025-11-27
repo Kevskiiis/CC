@@ -6,7 +6,7 @@ import { COLORS } from "../../themes/colors";
 import { responsive } from "../../utils/responsive";
 
 export default function PostScreen () {
-
+    
 
     return (
         <KeyboardAwareScrollView style={PostScreenStyles.screen}>

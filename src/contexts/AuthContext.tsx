@@ -124,6 +124,10 @@ export function AuthProvider ({children}: {children: React.ReactNode}) {
         }
     };
 
+    const handleResetPassword = (email: string, newPassword: string) => {
+        
+    }
+
 
     const restoreSession = async () => {
         try {

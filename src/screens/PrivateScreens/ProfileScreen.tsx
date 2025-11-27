@@ -14,8 +14,8 @@ export default function ProfileScreen () {
             </View>
             <View style={ProfileScreenStyles.configurationContainer}>
                 <Avatar.Image style={ProfileScreenStyles.avatar} size={responsive.number(100)} source={require('../../../assets/icon.png')}/>
-                <Text style={ProfileScreenStyles.profileName}>Kevin Rodriguez</Text>
-                <Text style={ProfileScreenStyles.bio}>I am a pro Fortnite player. I know the ganme is dead, but I'm still the best.</Text>
+                <Text style={ProfileScreenStyles.profileName}>First-Name Last-Name</Text>
+                <Text style={ProfileScreenStyles.bio}>This is a bio.</Text>
                 <Button style={ProfileScreenStyles.button}>Edit Profile</Button>
             </View>
             <Divider/>
