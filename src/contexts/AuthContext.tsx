@@ -54,7 +54,8 @@ export function AuthProvider ({children}: {children: React.ReactNode}) {
             // Extract the data:
             const data = result.data;
 
-            console.log(data);
+            // console.log(data.access_token);
+            // console.log(data.refresh_token);
 
             // Handle Success: 
             if (data.success) {

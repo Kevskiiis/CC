@@ -12,7 +12,7 @@ export default function HomeScreen() {
   return (
           <View style={RegisterStyles.screen}>
               <TopNavigator/>
-              <Text style={{flexGrow: 1}}>Hello World</Text>
+              {/* <Text style={{flexGrow: 1}}>Hello World</Text> */}
           </View>
   );
 }
