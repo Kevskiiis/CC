@@ -2,6 +2,7 @@ import { useContext, createContext, useState, useEffect} from "react";
 import { createClient } from "@supabase/supabase-js";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@env';
 import * as SecureStore from 'expo-secure-store';
+import axios from "axios";
 
 // Supabase Client:
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -22,10 +23,8 @@ type newUser = {
 
 type AuthContextType = {
     isAuthenticated: boolean;
-    signIn: (user: returningUser) => Promise<void>;
-    signOut: () => Promise<void>;
-    createAccount: (newUser: newUser) => Promise<void>;
-    restoreSession: () => Promise<void>;
+    restoreUser: () => Promise<void>;
+    setAuthenicatedStatus: (newStatus: boolean) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -33,142 +32,59 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider ({children}: {children: React.ReactNode}) {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
-    const signIn = async (user: returningUser) => {
-        const {email, password} = user;
-
+    const restoreUser = async () => {
         try {
-            // Attempt to login the user with email and password
-            const {data, error} = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            })
+            if (isAuthenticated) return; 
 
-             if (error) {
-                console.error("Login error:", error.message);
-                setIsAuthenticated(false);
-                return;
-            }
-            if (data.session) {
-                await SecureStore.setItemAsync("RefreshToken", data.session.refresh_token);
-                await SecureStore.setItemAsync("AccessToken", data.session.access_token);
+            const refreshToken = await SecureStore.getItemAsync("refresh_token");
+
+            console.log(refreshToken);
+
+            // Handle the edge case if there is none:
+            const result = await axios.post(
+                'https://ccbackend-production-5adb.up.railway.app/restore-session',
+                {},                                  
+                {
+                    headers: {
+                        refreshtoken: refreshToken
+                    },
+                }
+            );
+
+            // Extract the data:
+            const data = result.data;
+
+            console.log(data);
+
+            // Handle Success: 
+            if (data.success) {
+                await SecureStore.setItemAsync("access_token", String(data.access_token));
+                await SecureStore.setItemAsync("refresh_token", String(data.refresh_token));
                 setIsAuthenticated(true);
-            }
-        }
-        catch (err) {
-            console.error(err);
-        }
-    }
-    
-    const signOut = async () => {
-        try {
-            const {error} = await supabase.auth.signOut();
-            if (error) console.error("Sign out error:", error.message);
-
-            await SecureStore.deleteItemAsync("RefreshToken");
-            await SecureStore.deleteItemAsync("AccessToken");
-            setIsAuthenticated(false);
-        }   
-        catch (err) {
-            console.error(err);
-        }
-    }
-
-    const createAccount = async (newUser: newUser) => {
-        const { email, password, firstName, lastName, phoneNumber } = newUser;
-
-        try {
-            // Create the user in Supabase Auth
-            const { data, error } = await supabase.auth.signUp({
-                email,
-                password,
-            });
-
-            if (error) {
-                console.error("Sign up error:", error.message);
-                return;
-            }
-
-            // Get the newly created user ID
-            const user = data.user;
-            if (!user) {
-                console.error("No user returned from signUp");
-                return;
-            }
-
-            // Insert the rest of the profile info in your 'profiles' table
-            const { error: profileError } = await supabase.from("profiles").insert({
-                profile_id: user.id,
-                first_name: firstName,
-                last_name: lastName,
-                phone_number: phoneNumber,
-                created_at: new Date(),
-            });
-
-            if (profileError) {
-                console.error("Profile creation error:", profileError.message);
-                return;
-            }
-
-            // Store tokens if a session was created
-            if (data.session) {
-                await SecureStore.setItemAsync("AccessToken", data.session.access_token);
-                await SecureStore.setItemAsync("RefreshToken", data.session.refresh_token);
-                setIsAuthenticated(true);
-            } else {
-                // If you’re using email confirmation, the session may be null until verified:
-                console.log("User created, waiting for email verification.");
             }
         } 
-        catch (err) {
-            console.error("CreateAccount exception:", err);
-        }
-    };
-
-    const handleResetPassword = (email: string, newPassword: string) => {
-        
-    }
-
-
-    const restoreSession = async () => {
-        try {
-            const refreshToken = await SecureStore.getItemAsync("RefreshToken");
-            const accessToken = await SecureStore.getItemAsync("AccessToken");
-
-            if (refreshToken && accessToken) {
-                const { data, error } = await supabase.auth.setSession({
-                    access_token: accessToken,
-                    refresh_token: refreshToken,
-                });
-
-                if (error) {
-                    console.error("Session restore error:", error.message);
-                    setIsAuthenticated(false);
-                    return;
-                }
-
-                if (data.session) {
-                    await SecureStore.setItemAsync("AccessToken", data.session.access_token);
-                    await SecureStore.setItemAsync("RefreshToken", data.session.refresh_token);
-                    setIsAuthenticated(true);
-                }
-            } 
-            else {
-                console.log("No tokens found.");
-                setIsAuthenticated(false);
+        catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                console.log(err.response?.data?.message);
             }
-        } catch (err) {
-            console.error("RestoreSession exception:", err);
-            setIsAuthenticated(false);
+            else {
+                console.log("Unexpected error:", err);
+            }
         }
     };
+
+    // SetAuthenticated:
+    const setAuthenicatedStatus = async (newStatus: boolean) => {
+        setIsAuthenticated(newStatus);
+    }
 
     // When the component mounts, see if there is a session to restore:
     useEffect (() => {
-        restoreSession();
+        restoreUser();
     },[]);
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, signIn, signOut, createAccount, restoreSession}}>
+        <AuthContext.Provider value={{isAuthenticated, restoreUser, setAuthenicatedStatus}}>
             {children}
         </AuthContext.Provider>
     )

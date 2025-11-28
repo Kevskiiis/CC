@@ -64,7 +64,7 @@ function RegisterScreen ({navigation}: props) {
     const [isLoading, setLoading] = useState<Boolean>(false);
 
     // Contexts:
-    const {isAuthenticated, createAccount} = useAuth(); 
+    // const {isAuthenticated, createAccount} = useAuth(); 
 
     const pickImage = async () => {
         const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
