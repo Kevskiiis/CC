@@ -115,9 +115,9 @@ export default function TopNavigator () {
             <Button style={TopNavigatorStyles.button} mode="contained" buttonColor="white" textColor='black' icon='menu-down' onPress={() => {
                 showModal();
                 getCommunities(); 
-            }}>Community</Button>
-            <IconButton size={responsive.number(32)} icon='chat' iconColor="white"/>
-            <IconButton size={responsive.number(32)} icon='bell' iconColor="white"/>
+            }}>Communities</Button>
+            {/* <IconButton size={responsive.number(32)} icon='chat' iconColor="white"/>
+            <IconButton size={responsive.number(32)} icon='bell' iconColor="white"/> */}
             <Portal>
                 <Modal visible={isVisible} onDismiss={hideModal} contentContainerStyle={TopNavigatorStyles.modal}>
                     <ScrollView>
@@ -158,7 +158,7 @@ const TopNavigatorStyles = StyleSheet.create({
         backgroundColor: '#6c0202ff'
     },
     button: {
-        width: responsive.number(150),
+        width: responsive.number(250),
         height: responsive.number(40)
     },
     modal: {
