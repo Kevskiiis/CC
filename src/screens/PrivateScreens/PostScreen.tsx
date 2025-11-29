@@ -3,9 +3,9 @@ import { View, ScrollView, StyleSheet } from "react-native";
 import { Button, IconButton, Text, Card } from "react-native-paper";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { COLORS } from "../../themes/colors";
+import PostModal from "../../components/Modals/PostModal"
+import AnnouncementModal from "../../components/Modals/AnnouncementModal";
 import { responsive } from "../../utils/responsive";
-import PostModal from "../../components/PostModal";
-import AnnouncementModal from "../../components/AnnouncementModal";
 
 export default function PostScreen() {
   const [isPostModalVisible, setPostModalVisible] = useState(false);

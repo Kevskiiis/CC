@@ -38,7 +38,7 @@ export function AuthProvider ({children}: {children: React.ReactNode}) {
 
             const refreshToken = await SecureStore.getItemAsync("refresh_token");
 
-            console.log(refreshToken);
+            // console.log(refreshToken);
 
             // Handle the edge case if there is none:
             const result = await axios.post(

@@ -2,32 +2,28 @@ import { Button, IconButton, TextInput, Modal, Portal, ActivityIndicator, MD2Col
 import { StyleSheet, ScrollView, View, Image, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { responsive } from "../utils/responsive";
+import { responsive } from "../../utils/responsive";
 import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
-import ErrorBox from "./ErrorBox";
-import SuccessBox from "./SuccessBox";
-import { COLORS } from "../themes/colors";
+import ErrorBox from "../ErrorBox";
+import SuccessBox from "../SuccessBox";
+import { COLORS } from "../../themes/colors";
 
-type Announcement = {
+type post = {
   communityID: number | null; 
   communityName: string | null;
-  announcementTitle: string;
-  announcementDescription: string;
-  announcementRole: string; 
-  announcementImage: string | null;
+  postTitle: string;
+  postDescription: string;
+  postImage: string | null;
 }
 
-const roles = ["Alert", "Reminder", "Event"]; 
-
-function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideModal: () => void }) {
-  const [announcementForm, setAnnouncementForm] = useState<Announcement>({
+function PostModal({ isVisible, hideModal }: { isVisible: boolean, hideModal: () => void }) {
+  const [postForm, setPostForm] = useState<post>({
     communityID: null,
     communityName: null,
-    announcementTitle: '',
-    announcementDescription: '',
-    announcementRole: '',
-    announcementImage: null
+    postTitle: '',
+    postDescription: '',
+    postImage: null
   });
 
   const [communities, setCommunities] = useState<any[]>([]);
@@ -35,9 +31,12 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
   const [error, setError] = useState({ errorState: false, message: '' });
   const [success, setSuccess] = useState({ successState: false, message: '' });
 
-  const [communityMenuVisible, setCommunityMenuVisible] = useState(false);
-  const [roleMenuVisible, setRoleMenuVisible] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
+  const openMenu = () => setMenuVisible(true);
+  const closeMenu = () => setMenuVisible(false);
+
+  // Fetch communities when modal opens
   useEffect(() => {
     if (isVisible) getCommunities();
   }, [isVisible]);
@@ -53,7 +52,7 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
     });
 
     if (!result.canceled) {
-      setAnnouncementForm(prev => ({ ...prev, announcementImage: result.assets[0].uri }));
+      setPostForm(prev => ({ ...prev, postImage: result.assets[0].uri }));
     }
   }
 
@@ -63,7 +62,7 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
       setError({ errorState: false, message: '' });
 
       const accessToken = await SecureStore.getItemAsync('access_token');
-      const result = await axios.get('https://ccbackend-production-5adb.up.railway.app/get-user-communities', { 
+      const result = await axios.get('https://ccbackend-production-5adb.up.railway.app/get-user-communities', {
         headers: { Authorization: accessToken }
       });
 
@@ -80,25 +79,20 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
   }
 
   const handleCommunitySelect = (community: any) => {
-    setAnnouncementForm(prev => ({
+    setPostForm(prev => ({
       ...prev,
       communityID: community.community_id,
       communityName: community.community_name
     }));
-    setCommunityMenuVisible(false);
-  }
-
-  const handleRoleSelect = (role: string) => {
-    setAnnouncementForm(prev => ({ ...prev, announcementRole: role }));
-    setRoleMenuVisible(false);
+    closeMenu();
   }
 
   const handleChange = (inputName: string, newText: string) => {
-    setAnnouncementForm(prev => ({ ...prev, [inputName]: newText }));
+    setPostForm(prev => ({ ...prev, [inputName]: newText }));
   }
 
-  const createAnnouncement = async () => {
-    if (!announcementForm.communityID || !announcementForm.announcementTitle || !announcementForm.announcementDescription || !announcementForm.announcementRole) {
+  const createPost = async () => {
+    if (!postForm.communityID || !postForm.postTitle || !postForm.postDescription) {
       setError({ errorState: true, message: 'Please fill all required fields' });
       return;
     }
@@ -111,24 +105,23 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
       const accessToken = await SecureStore.getItemAsync('access_token');
       const formData = new FormData();
 
-      formData.append("communityID", String(announcementForm.communityID));
-      formData.append("communityName", String(announcementForm.communityName));
-      formData.append("announcementTitle", announcementForm.announcementTitle);
-      formData.append("announcementDescription", announcementForm.announcementDescription);
-      formData.append("announcementRole", announcementForm.announcementRole);
+      formData.append("communityID", String(postForm.communityID));
+      formData.append("communityName", String(postForm.communityName));
+      formData.append("postTitle", postForm.postTitle);
+      formData.append("postDescription", postForm.postDescription);
 
-      if (announcementForm.announcementImage) {
-        const fileName = announcementForm.announcementImage.split("/").pop();
+      if (postForm.postImage) {
+        const fileName = postForm.postImage.split("/").pop();
         const match = /\.(\w+)$/.exec(fileName ?? "");
         const type = match ? `image/${match[1]}` : `image`;
-        formData.append("announcementImage", {
-          uri: announcementForm.announcementImage,
+        formData.append("postImage", {
+          uri: postForm.postImage,
           name: fileName,
           type: type,
         } as any);
       }
 
-      const response = await fetch("https://ccbackend-production-5adb.up.railway.app/create-announcement", { 
+      const response = await fetch("https://ccbackend-production-5adb.up.railway.app/create-post", {
         method: "POST",
         body: formData,
         headers: {
@@ -141,15 +134,14 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
 
       if (data.success) {
         setIsLoading(false);
-        setSuccess({ successState: true, message: "Announcement created successfully!" });
-        // Reset form
-        setAnnouncementForm({
+        setSuccess({ successState: true, message: "Post created successfully!" });
+        // Reset form after success
+        setPostForm({
           communityID: null,
           communityName: null,
-          announcementTitle: '',
-          announcementDescription: '',
-          announcementRole: '',
-          announcementImage: null
+          postTitle: '',
+          postDescription: '',
+          postImage: null
         });
       } else {
         setIsLoading(false);
@@ -172,11 +164,11 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
           {/* Community Dropdown */}
           <View style={{ marginBottom: responsive.number(10) }}>
             <Menu
-              visible={communityMenuVisible}
-              onDismiss={() => setCommunityMenuVisible(false)}
+              visible={menuVisible}
+              onDismiss={closeMenu}
               anchor={
-                <Button mode="outlined" onPress={() => setCommunityMenuVisible(prev => !prev)}>
-                  {announcementForm.communityName || "Select Community"}
+                <Button mode="outlined" onPress={() => setMenuVisible(prev => !prev)}>
+                  {postForm.communityName || "Select Community"}
                 </Button>
               }
             >
@@ -190,45 +182,28 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
             </Menu>
           </View>
 
-          {/* Announcement Role Dropdown */}
-          <View style={{ marginBottom: responsive.number(10) }}>
-            <Menu
-              visible={roleMenuVisible}
-              onDismiss={() => setRoleMenuVisible(false)}
-              anchor={
-                <Button mode="outlined" onPress={() => setRoleMenuVisible(prev => !prev)}>
-                  {announcementForm.announcementRole || "Select Role"}
-                </Button>
-              }
-            >
-              {roles.map((role) => (
-                <Menu.Item key={role} title={role} onPress={() => handleRoleSelect(role)} />
-              ))}
-            </Menu>
-          </View>
-
-          {/* Announcement Title */}
+          {/* Post Title */}
           <TextInput
-            label="Announcement Title"
-            value={announcementForm.announcementTitle}
-            onChangeText={text => handleChange('announcementTitle', text)}
+            label="Post Title"
+            value={postForm.postTitle}
+            onChangeText={text => handleChange('postTitle', text)}
             style={{ marginBottom: responsive.number(10) }}
           />
 
-          {/* Announcement Description */}
+          {/* Post Description */}
           <TextInput
-            label="Announcement Description"
-            value={announcementForm.announcementDescription}
-            onChangeText={text => handleChange('announcementDescription', text)}
+            label="Post Description"
+            value={postForm.postDescription}
+            onChangeText={text => handleChange('postDescription', text)}
             multiline
             numberOfLines={4}
             style={{ marginBottom: responsive.number(10) }}
           />
 
-          {/* Announcement Image */}
-          {announcementForm.announcementImage && (
+          {/* Post Image */}
+          {postForm.postImage && (
             <Image
-              source={{ uri: announcementForm.announcementImage }}
+              source={{ uri: postForm.postImage }}
               style={{ width: responsive.number(297), height: responsive.number(120), marginBottom: 10 }}
             />
           )}
@@ -246,16 +221,15 @@ function AnnouncementModal({ isVisible, hideModal }: { isVisible: boolean, hideM
             <Text>Select Image</Text>
           </TouchableOpacity>
 
-          <Button textColor={COLORS.primaryText} style={{backgroundColor: COLORS.primary}} mode="contained" onPress={createAnnouncement}>
-            Submit Announcement
+          <Button textColor={COLORS.primaryText} style={{backgroundColor: COLORS.primary}} mode="contained" onPress={createPost}>
+            Submit Post
           </Button>
         </ScrollView>
       </Modal>
     </Portal>
   )
 }
-
-export default AnnouncementModal;
+export default PostModal;
 
 const postModalStyles = StyleSheet.create({
   modal: {
