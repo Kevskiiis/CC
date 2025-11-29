@@ -5,6 +5,7 @@ import CommunityList from "./CommunityList";
 import { COLORS } from "../themes/colors";
 import { useState } from "react";
 import ErrorBox from "./ErrorBox";
+import Logo from "../../assets/logo.svg";
 
 // Frameworks:
 import axios from "axios";
@@ -111,7 +112,8 @@ export default function TopNavigator () {
 
     return (
         <View style={TopNavigatorStyles.TopNavContainer}>
-            <Image style={TopNavigatorStyles.logo}/>
+            <Logo width={responsive.number(90)} height={responsive.number(50)}/>
+            {/* <Image style={TopNavigatorStyles.logo}/> */}
             <Button style={TopNavigatorStyles.button} mode="contained" buttonColor="white" textColor='black' icon='menu-down' onPress={() => {
                 showModal();
                 getCommunities(); 

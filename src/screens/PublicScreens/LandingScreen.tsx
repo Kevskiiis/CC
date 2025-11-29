@@ -2,6 +2,7 @@ import {StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { PublicRoutesStackParams } from '../../routes/PublicRoutes';
 import { StatusBar } from 'expo-status-bar';
+import Logo from "../../../assets/logo.svg";
 
 // React Native Paper:
 import { responsive } from '../../utils/responsive';
@@ -12,10 +13,7 @@ function LandingScreen({navigation}: props) {
 
   return (
     <View style={OpeninScreenStyle.container}>
-        <Image 
-          src={''}
-          style={OpeninScreenStyle.logo}
-        ></Image>
+        <Logo width={responsive.number(250)} height={responsive.number(250)}/>
         {/* Login Button */}
         <TouchableOpacity style={OpeninScreenStyle.button} onPress={() => navigation.navigate('LoginScreen')}>
           <Text style={OpeninScreenStyle.buttonText}>Login</Text>
