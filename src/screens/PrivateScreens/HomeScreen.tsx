@@ -9,12 +9,12 @@ import { responsive } from "../../utils/responsive";
 import TopNavigator from "../../components/TopNavigator";
 
 export default function HomeScreen() {
-  return (
-          <View style={RegisterStyles.screen}>
-              <TopNavigator/>
-              <Text style={{flexGrow: 1}}>Hello World</Text>
-          </View>
-  );
+    return (
+        <View style={RegisterStyles.screen}>
+            <TopNavigator/>
+                {/* <Text style={{flexGrow: 1}}>Hello World</Text> */}
+        </View>
+    );
 }
 
 const RegisterStyles = StyleSheet.create({

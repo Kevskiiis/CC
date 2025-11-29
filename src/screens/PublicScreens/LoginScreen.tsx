@@ -4,6 +4,8 @@ import PhoneInput from 'react-native-phone-input';
 import { useState, useRef } from "react";
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { PublicRoutesStackParams } from '../../routes/PublicRoutes';
+import axios from "axios";
+import * as SecureStore from 'expo-secure-store';
 
 // React Native Paper Library Components:
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
@@ -17,6 +19,9 @@ import { useAuth } from "../../contexts/AuthContext";
 import { responsive } from "../../utils/responsive";
 import AppbarBackAction from "react-native-paper/lib/typescript/components/Appbar/AppbarBackAction";
 
+import ErrorBox from "../../components/ErrorBox";
+import SuccessBox from "../../components/SuccessBox";
+
 type props = NativeStackScreenProps<PublicRoutesStackParams, 'LoginScreen'>;
 
 type loginForm = {
@@ -24,14 +29,39 @@ type loginForm = {
     password: string;
 }
 
-function RegisterScreen ({navigation}: props) {
+type errorState = {
+    errorState: boolean;
+    message: string; 
+}
+
+type successState = {
+    successState: boolean;
+    message: string; 
+}
+
+function LoginScreen ({navigation}: props) { 
+    // REACT STATES:
     const [loginForm, setForm] = useState<loginForm>({
         email: '',
         password: ''
     });
 
-    const {signIn} = useAuth();
+    const [error, setError] = useState<errorState>({
+        errorState: false,
+        message: ''
+    });
+        
+    const [success, setSuccess] = useState<successState>({
+        successState: false,
+        message: ''
+    });
+    
+    const [isLoading, setLoading] = useState<Boolean>(false);
 
+    // AUTH CONTEXT: 
+    const {setAuthenicatedStatus} = useAuth();
+
+    // REACT FUNCTIONS: 
     const handleChange = (inputName: string, newText: string) => {
         setForm ((prevValue) => ({
             ...prevValue,
@@ -40,9 +70,66 @@ function RegisterScreen ({navigation}: props) {
         console.log(loginForm);
     }
 
-    const handleSubmit = () => {
-        signIn(loginForm);
-    }   
+    const handleSubmit = async () => {
+        try {
+            setLoading(true);
+
+            const response = await axios.post(
+                "https://ccbackend-production-5adb.up.railway.app/sign-in",
+                {
+                    email: loginForm.email.toLowerCase().trim(),
+                    password: loginForm.password.trim()
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }
+            );
+
+            const data = response.data; 
+            console.log(response);
+
+            if (data.success) {
+                // Set error back to false if it was set:
+                if (error.errorState === true) {
+                    setError({
+                        errorState: false,
+                        message: ""
+                    })
+                }
+
+                // Save tokens and id: 
+                await SecureStore.setItemAsync("userID", data.userID);
+                await SecureStore.setItemAsync("access_token", data.access_token);
+                await SecureStore.setItemAsync("refresh_token", data.refresh_token);
+                    
+                // Display success message:
+                setLoading(false);
+                setSuccess({
+                    successState: true,
+                    message: data.message + " " + "Re-routing now..."
+                });
+
+                // Handle success & pause for two seconds:
+                setTimeout(()=> {
+                    setAuthenicatedStatus(true); 
+                }, 3000);
+            }
+        }
+        catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                setLoading(false); 
+                setError({
+                    errorState: true,
+                    message: err.response?.data?.message
+                })
+            }
+            else {
+                console.log("Unexpected error:", err);
+            }
+        }
+    }
 
     return (
         <SafeAreaProvider>
@@ -59,43 +146,49 @@ function RegisterScreen ({navigation}: props) {
                             <Appbar.Content titleStyle={RegisterStyles.appBarTitle} title="LOGIN" color="#DDA853"/>
                             <Appbar.Action style={RegisterStyles.appBarItem} icon="arrow-left" color="#1a1a1aff" onPress={() => navigation.goBack()} />
                         </Appbar.Header>
-                        <TextInput 
-                            style={RegisterStyles.textInput} 
-                            label="Email" 
-                            placeholder="example@gmail.com" 
-                            error={false} 
-                            mode="flat"
-                            underlineColor="#1a1a1aff"
-                            activeUnderlineColor="#1a1a1aff"
-                            value={loginForm.email}
-                            onChangeText={(newText) => handleChange('email', newText)}
-                        >
-                        </TextInput>
-                        <View>
+                        {(!isLoading && success.successState) && <SuccessBox message={success.message} width={300} height={280}/>}
+                        {(isLoading && !success.successState) && <Text style={RegisterStyles.loadingText}>Loading...</Text>}
+                        {(!isLoading && !success.successState) && <>
+                            {/* Error Box */}
+                            {error.errorState === true && <ErrorBox message={error.message} width={300}/>}
                             <TextInput 
                                 style={RegisterStyles.textInput} 
-                                label="Password" 
-                                placeholder="Password1!" 
+                                label="Email" 
+                                placeholder="example@gmail.com" 
                                 error={false} 
                                 mode="flat"
                                 underlineColor="#1a1a1aff"
                                 activeUnderlineColor="#1a1a1aff"
-                                value={loginForm.password}
-                                onChangeText={(newText) => handleChange('password', newText)}
+                                value={loginForm.email}
+                                onChangeText={(newText) => handleChange('email', newText)}
                             >
                             </TextInput>
-                            <Button style={RegisterStyles.forgotPassword} textColor="#0237beff">Forgot Password?</Button>
-                        </View>
-                        <TouchableOpacity style={RegisterStyles.submitButton} onPress={handleSubmit}>
-                            <Text style={RegisterStyles.submitButtonText}>SIGN IN</Text>
-                        </TouchableOpacity>
+                            <View>
+                                <TextInput 
+                                    style={RegisterStyles.textInput} 
+                                    label="Password" 
+                                    placeholder="Password1!" 
+                                    error={false} 
+                                    mode="flat"
+                                    underlineColor="#1a1a1aff"
+                                    activeUnderlineColor="#1a1a1aff"
+                                    value={loginForm.password}
+                                    onChangeText={(newText) => handleChange('password', newText)}
+                                >
+                                </TextInput>
+                                <Button style={RegisterStyles.forgotPassword} textColor="#0237beff">Forgot Password?</Button>
+                            </View>
+                            <TouchableOpacity style={RegisterStyles.submitButton} onPress={handleSubmit}>
+                                <Text style={RegisterStyles.submitButtonText}>SIGN IN</Text>
+                            </TouchableOpacity>
+                        </>}
                     </View>
                 </KeyboardAwareScrollView>
             </SafeAreaView>
         </SafeAreaProvider>
     )
 }
-export default RegisterScreen;
+export default LoginScreen;
 
 const RegisterStyles = StyleSheet.create({
     screen: {
@@ -107,8 +200,17 @@ const RegisterStyles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         textDecorationLine: 'underline',
-        textAlign: 'left'
+        textAlign: 'left',
+        height: responsive.number(40)
         // backgroundColor: '#000000ff'
+    },
+    loadingText: {
+        flexDirection: 'row',
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        width: responsive.number(300),
+        height: responsive.number(280),
+        // backgroundColor: '#ecececff'
     },
     submitButton: {
         alignItems: 'center',
