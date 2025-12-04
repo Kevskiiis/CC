@@ -1,17 +1,18 @@
-// App.tsx
-import React from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import OpeningRoutes from "./src/routes/OpeningRoutes";
-import MainRoutes from "./src/routes/MainRoutes";
-import { AuthProvider, useAuth } from "./src/context/AuthContext";
+import {useState} from 'react';
+import { StyleSheet } from 'react-native';
 
-function RootNav() {
-  const { isAuthenticated } = useAuth(); // ⬅️ no 'loading'
-  return (
-    <NavigationContainer>
-      {isAuthenticated ? <MainRoutes /> : <OpeningRoutes />}
-    </NavigationContainer>
-  );
+// Routes:
+import RoutesContainer from './src/routes/RoutesContainer';
+
+// Contexts:
+import { AuthProvider } from './src/contexts/AuthContext';
+
+export default function App() {
+    return (
+        <AuthProvider>
+            <RoutesContainer/>
+        </AuthProvider>
+    );
 }
 
 export default function App() {
