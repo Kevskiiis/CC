@@ -37,6 +37,7 @@ export function AuthProvider ({children}: {children: React.ReactNode}) {
             if (isAuthenticated) return; 
 
             const refreshToken = await SecureStore.getItemAsync("refresh_token");
+            if (!refreshToken) return;
 
             // console.log(refreshToken);
 
