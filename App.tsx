@@ -1,5 +1,4 @@
-import {useState} from 'react';
-import { StyleSheet } from 'react-native';
+import React from 'react';
 
 // Routes:
 import RoutesContainer from './src/routes/RoutesContainer';
@@ -8,17 +7,9 @@ import RoutesContainer from './src/routes/RoutesContainer';
 import { AuthProvider } from './src/contexts/AuthContext';
 
 export default function App() {
-    return (
-        <AuthProvider>
-            <RoutesContainer/>
-        </AuthProvider>
-    );
-}
-
-export default function App() {
   return (
     <AuthProvider>
-      <RootNav />
+      <RoutesContainer />
     </AuthProvider>
   );
 }

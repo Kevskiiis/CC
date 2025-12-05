@@ -1,21 +1,13 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-<<<<<<< HEAD:src/screens/LandingScreen.tsx
-
-=======
 import type { PublicRoutesStackParams } from '../../routes/PublicRoutes';
->>>>>>> cf8d902537942eea0b65bdf5d34cddadcd6b7d8f:src/screens/PublicScreens/LandingScreen.tsx
 import { StatusBar } from 'expo-status-bar';
 import Logo from "../../../assets/logo.svg";
 
 // React Native Paper:
 import { responsive } from '../../utils/responsive';
 
-<<<<<<< HEAD:src/screens/LandingScreen.tsx
-type Props = NativeStackScreenProps<any>; 
-=======
-type props = NativeStackScreenProps<PublicRoutesStackParams, 'LandingScreen'>; 
->>>>>>> cf8d902537942eea0b65bdf5d34cddadcd6b7d8f:src/screens/PublicScreens/LandingScreen.tsx
+type Props = NativeStackScreenProps<PublicRoutesStackParams, 'LandingScreen'>; 
 
 function LandingScreen({navigation}: Props) {
 
