@@ -28,7 +28,6 @@ export default function PostScreen() {
                 title="Create Announcement" 
                 left={(props) => <IconButton {...props} style={{paddingRight: responsive.number(15)}} icon="bullhorn-outline"/>}
               />
-              <Card.Cover/>
               <Card.Content>
                 <Text variant="bodyLarge">
                   Have big news? Post an announcement to keep your community informed.
@@ -52,7 +51,6 @@ export default function PostScreen() {
                 title="Create Post" 
                 left={(props) => <IconButton {...props} style={{paddingRight: responsive.number(15)}} icon="pencil"/>}
               />
-              <Card.Cover/>
               <Card.Content>
                 <Text variant="bodyLarge">
                   Got something to say? Create a post and start the conversation!

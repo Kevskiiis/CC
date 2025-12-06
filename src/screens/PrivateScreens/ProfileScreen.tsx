@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, ScrollView, StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
+import { View, ScrollView, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Avatar, IconButton, Text, Divider, Button } from "react-native-paper";
 import { responsive } from "../../utils/responsive";
 import { COLORS } from "../../themes/colors";
@@ -7,12 +7,19 @@ import * as SecureStore from "expo-secure-store";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import { ServerRoute } from "../../routes/ServerRoute";
+import { useNavigation } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { PrivateRoutesStackParams } from "../../routes/PrivateRoutes";
 
 export default function ProfileScreen() {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [editingBio, setEditingBio] = useState(false);
   const [bioText, setBioText] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+
+  const navigation = useNavigation<NativeStackNavigationProp<PrivateRoutesStackParams>>();
 
   const fetchProfile = async () => {
     try {
@@ -38,24 +45,75 @@ export default function ProfileScreen() {
     });
 
     if (!result.canceled) {
-      const uri = result.assets[0].uri;
-      // TODO: Upload new avatar to server
-      console.log("Selected image URI:", uri);
+      const asset = result.assets[0];
+      const uri = asset.uri;
+      const mimeType = asset.mimeType ?? "image/jpeg";
+      const fileName =
+        asset.fileName ??
+        `avatar_${Date.now()}.${mimeType.split("/")[1] ?? "jpg"}`;
+
+      setUploadingAvatar(true);
+      setErrorMessage(null);
+
+      try {
+        const token = await SecureStore.getItemAsync("access_token");
+        if (!token) {
+          setErrorMessage("You need to sign in to update your profile picture.");
+          setUploadingAvatar(false);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("newProfileImage", {
+          uri,
+          name: fileName,
+          type: mimeType,
+        } as any);
+
+        const res = await axios.patch(
+          `${ServerRoute}/update-profile-picture`,
+          formData,
+          {
+            headers: {
+              Authorization: String(token),
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+
+        const newImageUrl = res.data?.newImageUrl ?? uri;
+        setUser((prev: any) => ({ ...prev, avatar_public_url: newImageUrl }));
+      } catch (err) {
+        setErrorMessage("Could not update profile picture. Please try again.");
+        console.log("update-profile-picture error:", err);
+      } finally {
+        setUploadingAvatar(false);
+      }
     }
   };
 
   const saveBio = async () => {
     try {
       const token = await SecureStore.getItemAsync("access_token");
+      if (!token) {
+        setErrorMessage("You need to sign in to update your bio.");
+        return;
+      }
+      if (!bioText.trim()) {
+        setErrorMessage("Bio cannot be empty.");
+        return;
+      }
       await axios.patch(
         `${ServerRoute}/update-bio`,
-        { bio: bioText },
-        { headers: { Authorization: token } }
+        { newBio: bioText },
+        { headers: { Authorization: String(token) } }
       );
       setUser((prev: any) => ({ ...prev, bio: bioText }));
       setEditingBio(false);
+      setErrorMessage(null);
     } catch (err) {
-      console.log(err);
+      setErrorMessage("Could not update bio. Please try again.");
+      console.log("update-bio error:", err);
     }
   };
 
@@ -84,7 +142,11 @@ export default function ProfileScreen() {
       {/* Top Nav */}
       <View style={ProfileScreenStyles.TopNavContainer}>
         <Text style={ProfileScreenStyles.navTitle}>Profile</Text>
-        <IconButton icon="cog" size={30} onPress={() => console.log("Settings pressed")} />
+        <IconButton
+          icon="cog"
+          size={30}
+          onPress={() => navigation.navigate("Settings")}
+        />
       </View>
 
       {/* Profile Section */}
@@ -104,7 +166,9 @@ export default function ProfileScreen() {
               style={ProfileScreenStyles.avatarPlaceholder}
             />
           )}
-          <Text style={ProfileScreenStyles.editAvatarText}>Change Picture</Text>
+        <Text style={ProfileScreenStyles.editAvatarText}>
+          {uploadingAvatar ? "Updating..." : "Change Picture"}
+        </Text>
         </TouchableOpacity>
 
         {/* Display Name */}
@@ -112,6 +176,7 @@ export default function ProfileScreen() {
 
         {/* Editable Bio */}
         <View style={ProfileScreenStyles.bioContainer}>
+          {!!errorMessage && <Text style={ProfileScreenStyles.errorText}>{errorMessage}</Text>}
           {editingBio ? (
             <>
               <TextInput
@@ -247,5 +312,10 @@ const ProfileScreenStyles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  errorText: {
+    color: "#b00020",
+    marginBottom: responsive.number(8),
+    textAlign: "center",
   },
 });

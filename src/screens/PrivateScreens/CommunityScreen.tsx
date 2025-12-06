@@ -42,7 +42,6 @@ export default function CommunityScreen() {
                   />
                 )}
               />
-              <Card.Cover />
               <Card.Content>
                 <Text variant="bodyLarge">
                   Meet, chat, and collaborate — your next great community starts here.
@@ -72,7 +71,6 @@ export default function CommunityScreen() {
                   />
                 )}
               />
-              <Card.Cover />
               <Card.Content>
                 <Text variant="bodyLarge">
                   Lead the way — create a community and inspire others to join your mission!
@@ -102,7 +100,6 @@ export default function CommunityScreen() {
                   />
                 )}
               />
-              <Card.Cover />
               <Card.Content>
                 <Text variant="bodyLarge">
                   View all your joined communities — explore, manage, or leave anytime.

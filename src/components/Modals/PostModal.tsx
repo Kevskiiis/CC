@@ -1,4 +1,4 @@
-import { Button, IconButton, TextInput, Modal, Portal, ActivityIndicator, MD2Colors, Menu, Text } from "react-native-paper";
+import { Button, TextInput, Modal, Portal, ActivityIndicator, MD2Colors, Menu, Text } from "react-native-paper";
 import { StyleSheet, ScrollView, View, Image, TouchableOpacity } from "react-native";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -8,6 +8,7 @@ import * as SecureStore from 'expo-secure-store';
 import ErrorBox from "../ErrorBox";
 import SuccessBox from "../SuccessBox";
 import { COLORS } from "../../themes/colors";
+import { ServerRoute } from "../../routes/ServerRoute";
 
 type post = {
   communityID: number | null; 
@@ -36,6 +37,9 @@ function PostModal({ isVisible, hideModal }: { isVisible: boolean, hideModal: ()
   const openMenu = () => setMenuVisible(true);
   const closeMenu = () => setMenuVisible(false);
 
+  const sanitizeToken = (token: string | null) =>
+    (token ?? '').replace(/^Bearer\s+/i, '').trim();
+
   // Fetch communities when modal opens
   useEffect(() => {
     if (isVisible) getCommunities();
@@ -61,20 +65,28 @@ function PostModal({ isVisible, hideModal }: { isVisible: boolean, hideModal: ()
       setIsLoading(true);
       setError({ errorState: false, message: '' });
 
-      const accessToken = await SecureStore.getItemAsync('access_token');
-      const result = await axios.get('https://ccbackend-production-5adb.up.railway.app/get-user-communities', {
+      const rawToken = await SecureStore.getItemAsync('access_token');
+      const accessToken = sanitizeToken(rawToken);
+      if (!accessToken) {
+        setIsLoading(false);
+        setError({ errorState: true, message: 'You need to sign in to view communities.' });
+        return;
+      }
+
+      const result = await axios.get(`${ServerRoute}/get-user-communities`, {
         headers: { Authorization: accessToken }
       });
 
       const data = result.data;
 
       if (data.success) setCommunities(data.communities || []);
-      else setError({ errorState: true, message: data.message });
+      else setError({ errorState: true, message: data.message || 'Failed to load communities.' });
 
       setIsLoading(false);
     } catch (err: any) {
       setIsLoading(false);
-      setError({ errorState: true, message: err.response?.data?.message || 'Unexpected error' });
+      const msg = err.response?.data?.message || err.message || 'Unexpected error';
+      setError({ errorState: true, message: msg });
     }
   }
 
@@ -102,7 +114,14 @@ function PostModal({ isVisible, hideModal }: { isVisible: boolean, hideModal: ()
       setError({ errorState: false, message: '' });
       setSuccess({ successState: false, message: '' });
 
-      const accessToken = await SecureStore.getItemAsync('access_token');
+      const rawToken = await SecureStore.getItemAsync('access_token');
+      const accessToken = sanitizeToken(rawToken);
+      if (!accessToken) {
+        setIsLoading(false);
+        setError({ errorState: true, message: 'You need to sign in to create a post.' });
+        return;
+      }
+
       const formData = new FormData();
 
       formData.append("communityID", String(postForm.communityID));
@@ -121,12 +140,12 @@ function PostModal({ isVisible, hideModal }: { isVisible: boolean, hideModal: ()
         } as any);
       }
 
-      const response = await fetch("https://ccbackend-production-5adb.up.railway.app/create-post", {
+      const response = await fetch(`${ServerRoute}/create-post`, {
         method: "POST",
         body: formData,
         headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: String(accessToken)
+          // Let fetch set the correct multipart boundary automatically
+          Authorization: accessToken
         }
       });
 
@@ -145,11 +164,12 @@ function PostModal({ isVisible, hideModal }: { isVisible: boolean, hideModal: ()
         });
       } else {
         setIsLoading(false);
-        setError({ errorState: true, message: data.message });
+        setError({ errorState: true, message: data.message || 'Failed to create post.' });
       }
     } catch (err: any) {
       setIsLoading(false);
-      setError({ errorState: true, message: err.response?.data?.message || 'Unexpected error' });
+      const msg = err.response?.data?.message || err.message || 'Unexpected error';
+      setError({ errorState: true, message: msg });
     }
   }
 

@@ -1,7 +1,6 @@
-import { StyleSheet, ScrollView, Text, View, Image} from "react-native";
-import { Appbar, Button, IconButton, List, Modal, Portal} from "react-native-paper";
+import { StyleSheet, ScrollView, Text, View } from "react-native";
+import { Button, Modal, Portal } from "react-native-paper";
 import { responsive } from "../utils/responsive";
-import CommunityList from "./CommunityList";
 import { COLORS } from "../themes/colors";
 import { useState } from "react";
 import ErrorBox from "./ErrorBox";
@@ -11,6 +10,7 @@ import Logo from "../../assets/logo.svg";
 import axios from "axios";
 import { ActivityIndicator, MD2Colors } from "react-native-paper";
 import * as SecureStore from 'expo-secure-store';
+import { ServerRoute } from "../routes/ServerRoute";
 
 type community = {
   community_id: number;
@@ -22,10 +22,14 @@ type community = {
   community_public_url: string
 };
 
-export default function TopNavigator () {
+type Props = {
+  onCommunitySelect?: (community: community) => void;
+};
+
+export default function TopNavigator ({ onCommunitySelect }: Props) {
     // REACT STATES: 
     const [isVisible, setIsVisible] = useState(false);
-    const [selectedCommunity, setSelectedCommunity] = useState('');
+    const [selectedCommunity, setSelectedCommunity] = useState<string | null>(null);
     const [communities, setCommunities] = useState({
         isEmpty: false,
         message: '',
@@ -47,18 +51,25 @@ export default function TopNavigator () {
                 communities: []
             }))
     
-            // Obtain the access token:
-            const accessToken = await SecureStore.getItemAsync('access_token');
-            console.log("Access Token: " + accessToken);
+            const rawToken = (await SecureStore.getItemAsync('access_token')) ?? '';
+            const accessToken = rawToken.replace(/^Bearer\s+/i, '').trim();
+            if (!accessToken) {
+                setError({
+                    errorState: true,
+                    message: 'You need to sign in to view communities.'
+                });
+                return;
+            }
     
             // Set Loading: 
             setIsLoading(true);
     
             // Call the command to get all the user's communities:
             const result = await axios.get(
-                'https://ccbackend-production-5adb.up.railway.app/get-user-communities',
+                `${ServerRoute}/get-user-communities`,
                 {
                     headers: {
+                        // Backend auth middleware expects the raw access token
                         Authorization: accessToken
                     }
                 }
@@ -94,7 +105,7 @@ export default function TopNavigator () {
                 setIsLoading(false); 
                 setError({
                     errorState: true,
-                    message: err.response?.data?.message
+                    message: err.response?.data?.message || 'Failed to load communities.'
                 })
             }
             else {
@@ -110,6 +121,12 @@ export default function TopNavigator () {
     const showModal = () => setIsVisible(true);
     const hideModal = () => setIsVisible(false); 
 
+    const handleCommunitySelection = (community: community) => {
+        setSelectedCommunity(community.community_name);
+        onCommunitySelect?.(community);
+        hideModal();
+    };
+
     return (
         <View style={TopNavigatorStyles.TopNavContainer}>
             <Logo width={responsive.number(90)} height={responsive.number(50)}/>
@@ -117,7 +134,7 @@ export default function TopNavigator () {
             <Button style={TopNavigatorStyles.button} mode="contained" buttonColor="white" textColor='black' icon='menu-down' onPress={() => {
                 showModal();
                 getCommunities(); 
-            }}>Communities</Button>
+            }}>{selectedCommunity ? `Community: ${selectedCommunity}` : "Communities"}</Button>
             {/* <IconButton size={responsive.number(32)} icon='chat' iconColor="white"/>
             <IconButton size={responsive.number(32)} icon='bell' iconColor="white"/> */}
             <Portal>
@@ -130,7 +147,7 @@ export default function TopNavigator () {
 
                         {/* For loop to load all of the communities: */}
                         {!communities.isEmpty ? communities.communities.map((object: community) => (
-                            <Button key={object.community_id} style={TopNavigatorStyles.listItem} onPress={() => console.log(object.community_name)}>
+                            <Button key={object.community_id} style={TopNavigatorStyles.listItem} onPress={() => handleCommunitySelection(object)}>
                                 {object.community_name}
                             </Button>))
                         : null}
